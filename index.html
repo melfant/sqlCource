@@ -1,35 +1,157 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+    <title>reveal.js</title>
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/black.css">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>
-					<h1>Повторение</h1>
-				</section>
-				<section>
-                    <p>Это мы умеем</p>
-                    <pre><code data-trim>
+    <!-- custom user theme -->
+    <link rel="stylesheet" href="css/theme/tables.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <section>
+                <section>
+                    <p>Попробуем нормализовать таблицу</p>
+                    <table class="table-small">
+                        <tbody>
+                            <tr>
+                                <th>FullName</th>
+                                <td>Болгов Александр Викторович</td>
+                            </tr>
+                            <tr>
+                                <th>BirthDate</th>
+                                <td>1988-05-30</td>
+                            </tr>
+                            <tr>
+                                <th>HireDate</th>
+                                <td>2014-04-01</td>
+                            </tr>
+                            <tr>
+                                <th>HireAge</th>
+                                <td>24</td>
+                            </tr>
+                            <tr>
+                                <th>Department</th>
+                                <td>Казначейство/ОБАС ALM</td>
+                            </tr>
+                            <tr>
+                                <th>Salary</th>
+                                <td>890</td>
+                            </tr>
+                            <tr>
+                                <th>BossFullName</th>
+                                <td>Нейштадт Игорь Анатольевич</td>
+                            </tr>
+                            <tr>
+                                <th>SalaryDiffWithBoss</th>
+                                <td>1000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section>
+                    <ul>
+                        <li class=fragment>Разбить ФИО на три поля</li>
+                        <li class=fragment>Не хранить HireAge</li>
+                        <li class=fragment>Нужна таблица департаментов</li>
+                        <li class=fragment>Сотрудник должен иметь id</li>
+                        <li class=fragment>Босс должен быть указан ссылкой</li>
+                        <li class=fragment>Не хранить разницу зарплат</li>
+                    </ul>
+                </section>
+                <section>
+                    <div class="left">
+                        <table class="table-small">
+                            <tr>
+                                <th>EmployeeId</th>
+                                <td>1</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <th>FirstName</th>
+                                <td>Александр</td>
+                                <td>Игорь</td>
+                            </tr>
+                            <tr>
+                                <th>MiddleName</th>
+                                <td>Викторович</td>
+                                <td>Анатольевич</td>
+                            </tr>
+                            <tr>
+                                <th>LastName</th>
+                                <td>Болгов</td>
+                                <td>Нейштадт</td>
+                            </tr>
+                            <tr>
+                                <th>HireDate</th>
+                                <td>2014-04-01</td>
+                                <td>NULL</td>
+                            </tr>
+                            <tr>
+                                <th>BirthDate</th>
+                                <td>1988-05-30</td>
+                                <td>NULL</td>
+                            </tr>
+                            <tr>
+                                <th>DepartmentId</th>
+                                <td>101</td>
+                                <td>101</td>
+                            </tr>
+                            <tr>
+                                <th>BoossId</th>
+                                <td>2</td>
+                                <td>3</td>
+                            </tr>
+                            <tr>
+                                <th>Salary</th>
+                                <td>890</td>
+                                <td>1890</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="right">
+                        <table class="table-small">
+                            <tr>
+                                <th>DepartmentId</th>
+                                <td>101</td>
+                            </tr>
+                            <tr>
+                                <th>DepartmentName</th>
+                                <td>ОБАС ALM</td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+                <aside class="notes">
+                    Давайте рассмотрим таблицу, которую мог создать один из менеджеров. Какие вы могли бы сделать предложения по улучшению структуры
+                    таблицы? 5 Минут, работаем в группах, каждая группа делаем доклад 2 минуты
+                </aside>
+            </section>
+            <section>
+                <h1>Повторение</h1>
+            </section>
+            <section>
+                <p>Это мы умеем</p>
+                <pre><code data-trim>
 select distinct 
     col1, col2 as column2, col3 column3, col4 [column 4], 
     case 
@@ -44,15 +166,13 @@ from table
 where col1 <= 0 or col2 like '%pattern%' and col3 is null
 order by col4 desc, col2 asc, col1
 						</code></pre>
-					<aside class=notes>
-						Что знакомого в запросе?
-						Что происходит в каждом столбце?
-					</aside>
-				</section>
-				<section>
-                    <section>
-                        <p>Каков логический порядок выполнения запроса?</p>
-                    <pre><code data-trim data-noescape class="sql">
+                <aside class=notes>
+                    Что знакомого в запросе? Что происходит в каждом столбце?
+                </aside>
+            </section>
+            <section>
+                <p>Каков логический порядок выполнения запроса?</p>
+                <pre><code data-trim data-noescape class="sql">
 select distinct 
     case 
         when datediff(month, col5, current_timestamp) < 5 then 1
@@ -62,36 +182,148 @@ from table
 where col1 <= 0 or col2 like '%pattern%' and col3 is null
 order by col5_modified desc
                         </code></pre>
-                        <pre class="fragment"><code>1. from table</code></pre>
-                        <pre class="fragment"><code>2. where --какой порядок?</code></pre>
-                        <pre class="fragment"><code>3. case ... as col5_modified</code></pre>
-                        <pre class="fragment"><code>4. distinct</code></pre>
-                        <pre class="fragment"><code>5. order by col5_modified desc</code></pre>
-                        <pre class="fragment"><code>6. select</code></pre>  
+                <pre class="fragment"><code>1. from table</code></pre>
+                <pre class="fragment"><code>2. where --какой порядок?</code></pre>
+                <pre class="fragment"><code>3. case ... as col5_modified</code></pre>
+                <pre class="fragment"><code>4. distinct</code></pre>
+                <pre class="fragment"><code>5. order by col5_modified desc</code></pre>
+                <pre class="fragment"><code>6. select</code></pre>
+            </section>
+            <section>
+                <h1>Запросы к нескольким таблицам</h1>
+                <aside class=notes>
+                    До сих пор мы работали только с единственной таблицей, но, данные, описывающие какую-то либо сущность, обычно разбиты на
+                    несколько таблиц и хранятся в в них. Этот процесс известен как нормализация
+                </aside>
+            </section>
+            <section>
+                <p>Данные, описывающие объект, обычно хранятся в множестве таблиц</p>
+                <br>
+                <p>
+                    <strong>Нормализация</strong> - это процесс преобразования данных, устраняющий:
+                    <ul>
+                        <li>Избыточность</li>
+                        <li>Логические ошибки</li>
+                        <li>Аномалии обновления</li>
+                    </ul>
+                </p>
+                <aside class=notes>
+                    Нормализация, как правило, нацелена на то, чтобы хранились только первичные факты (а не факты, выводимые из других)
+                </aside>
+            </section>
 
-                    </section>
-				</section>
-                <section>
-                    Next slide
-                </section>
-			</div>
-		</div>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+            <section>
+                Next slide
+            </section>
+        </div>
+    </div>
 
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
-		</script>
-	</body>
+    <script>
+        // More info about config & dependencies:
+        // - https://github.com/hakimel/reveal.js#configuration
+        // - https://github.com/hakimel/reveal.js#dependencies
+        Reveal.initialize({
+            dependencies: [
+                { src: 'plugin/markdown/marked.js' },
+                { src: 'plugin/markdown/markdown.js' },
+                { src: 'plugin/notes/notes.js', async: true },
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
+            ]
+        });
+    </script>
+</body>
+
 </html>

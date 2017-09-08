@@ -1,0 +1,19 @@
+table.table-small * {
+    font-size: 75%;
+    border-width: 1px;
+    border-style: solid;
+}
+
+table.table-small td {
+    font-size: 65%;
+}
+
+div.left {
+    float: left;
+    width: 50%;
+}
+
+div.right {
+    float: right;
+    width: 50%;
+}
