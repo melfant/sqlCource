@@ -1,7 +1,15 @@
 table.table-small * {
-    font-size: 75%;
+    font-size: 80%;
+}
+
+table.table-small th, table.table-small tr, table.table-small td {
+    border-collapse: collapse;
     border-width: 1px;
     border-style: solid;
+}
+
+table.table-small th {
+    border-width: 3px;
 }
 
 table.table-small td {

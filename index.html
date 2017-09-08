@@ -14,7 +14,6 @@
 
     <!-- custom user theme -->
     <link rel="stylesheet" href="css/theme/tables.css">
-
     <!-- Printing and PDF exports -->
     <script>
         var link = document.createElement('link');
@@ -29,125 +28,8 @@
     <div class="reveal">
         <div class="slides">
             <section>
-                <section>
-                    <p>Попробуем нормализовать таблицу</p>
-                    <table class="table-small">
-                        <tbody>
-                            <tr>
-                                <th>FullName</th>
-                                <td>Болгов Александр Викторович</td>
-                            </tr>
-                            <tr>
-                                <th>BirthDate</th>
-                                <td>1988-05-30</td>
-                            </tr>
-                            <tr>
-                                <th>HireDate</th>
-                                <td>2014-04-01</td>
-                            </tr>
-                            <tr>
-                                <th>HireAge</th>
-                                <td>24</td>
-                            </tr>
-                            <tr>
-                                <th>Department</th>
-                                <td>Казначейство/ОБАС ALM</td>
-                            </tr>
-                            <tr>
-                                <th>Salary</th>
-                                <td>890</td>
-                            </tr>
-                            <tr>
-                                <th>BossFullName</th>
-                                <td>Нейштадт Игорь Анатольевич</td>
-                            </tr>
-                            <tr>
-                                <th>SalaryDiffWithBoss</th>
-                                <td>1000</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
-                <section>
-                    <ul>
-                        <li class=fragment>Разбить ФИО на три поля</li>
-                        <li class=fragment>Не хранить HireAge</li>
-                        <li class=fragment>Нужна таблица департаментов</li>
-                        <li class=fragment>Сотрудник должен иметь id</li>
-                        <li class=fragment>Босс должен быть указан ссылкой</li>
-                        <li class=fragment>Не хранить разницу зарплат</li>
-                    </ul>
-                </section>
-                <section>
-                    <div class="left">
-                        <table class="table-small">
-                            <tr>
-                                <th>EmployeeId</th>
-                                <td>1</td>
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <th>FirstName</th>
-                                <td>Александр</td>
-                                <td>Игорь</td>
-                            </tr>
-                            <tr>
-                                <th>MiddleName</th>
-                                <td>Викторович</td>
-                                <td>Анатольевич</td>
-                            </tr>
-                            <tr>
-                                <th>LastName</th>
-                                <td>Болгов</td>
-                                <td>Нейштадт</td>
-                            </tr>
-                            <tr>
-                                <th>HireDate</th>
-                                <td>2014-04-01</td>
-                                <td>NULL</td>
-                            </tr>
-                            <tr>
-                                <th>BirthDate</th>
-                                <td>1988-05-30</td>
-                                <td>NULL</td>
-                            </tr>
-                            <tr>
-                                <th>DepartmentId</th>
-                                <td>101</td>
-                                <td>101</td>
-                            </tr>
-                            <tr>
-                                <th>BoossId</th>
-                                <td>2</td>
-                                <td>3</td>
-                            </tr>
-                            <tr>
-                                <th>Salary</th>
-                                <td>890</td>
-                                <td>1890</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="right">
-                        <table class="table-small">
-                            <tr>
-                                <th>DepartmentId</th>
-                                <td>101</td>
-                            </tr>
-                            <tr>
-                                <th>DepartmentName</th>
-                                <td>ОБАС ALM</td>
-                            </tr>
-                        </table>
-                    </div>
-                </section>
-                <aside class="notes">
-                    Давайте рассмотрим таблицу, которую мог создать один из менеджеров. Какие вы могли бы сделать предложения по улучшению структуры
-                    таблицы? 5 Минут, работаем в группах, каждая группа делаем доклад 2 минуты
-                </aside>
-            </section>
-            <section>
                 <h1>Повторение</h1>
+                <h3>Чему вы научились в дистанционной части?</h3>
             </section>
             <section>
                 <p>Это мы умеем</p>
@@ -211,9 +93,139 @@ order by col5_modified desc
                     Нормализация, как правило, нацелена на то, чтобы хранились только первичные факты (а не факты, выводимые из других)
                 </aside>
             </section>
-
             <section>
-                Next slide
+                <section>
+                    <p>Попробуем нормализовать таблицу</p>
+                    <table class="table-small">
+                        <tbody>
+                            <tr>
+                                <th>FullName</th>
+                                <td>Болгов Александр Викторович</td>
+                            </tr>
+                            <tr>
+                                <th>BirthDate</th>
+                                <td>1988-05-30</td>
+                            </tr>
+                            <tr>
+                                <th>HireDate</th>
+                                <td>2014-04-01</td>
+                            </tr>
+                            <tr>
+                                <th>HireAge</th>
+                                <td>24</td>
+                            </tr>
+                            <tr>
+                                <th>Department</th>
+                                <td>Казначейство/ОБАС ALM</td>
+                            </tr>
+                            <tr>
+                                <th>Salary</th>
+                                <td>890</td>
+                            </tr>
+                            <tr>
+                                <th>BossFullName</th>
+                                <td>Нейштадт Игорь Анатольевич</td>
+                            </tr>
+                            <tr>
+                                <th>SalaryDiffWithBoss</th>
+                                <td>1000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+                <section>
+                    <ul>
+                        <li class=fragment>Разбить ФИО на три поля</li>
+                        <li class=fragment>Не хранить HireAge</li>
+                        <li class=fragment>Нужна таблица департаментов</li>
+                        <li class=fragment>Сотрудник должен иметь id</li>
+                        <li class=fragment>Босс должен быть указан ссылкой</li>
+                        <li class=fragment>Не хранить разницу зарплат</li>
+                    </ul>
+                </section>
+                <section>
+                    <div class="left">
+                        <table class="table-small">
+                            <tr>
+                                <td><span class="fragment" id="employee-pk">PK</span></td>
+                                <th>EmployeeId</th>
+                                <td>1</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>FirstName</th>
+                                <td>Александр</td>
+                                <td>Игорь</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>MiddleName</th>
+                                <td>Викторович</td>
+                                <td>Анатольевич</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>LastName</th>
+                                <td>Болгов</td>
+                                <td>Нейштадт</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>HireDate</th>
+                                <td>2014-04-01</td>
+                                <td>NULL</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>BirthDate</th>
+                                <td>1988-05-30</td>
+                                <td>NULL</td>
+                            </tr>
+                            <tr>
+                                <td id="department-fk"><span class="fragment">FK</span></td>
+                                <th>DepartmentId</th>
+                                <td>101</td>
+                                <td>101</td>
+                            </tr>
+                            <tr>
+                                <td id="employee-fk"><span class="fragment">FK</span></td>
+                                <th>BoossId</th>
+                                <td>2</td>
+                                <td>NULL</td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>Salary</th>
+                                <td>890</td>
+                                <td>1890</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="right">
+                        <table class="table-small">
+                            <tr>
+                                <td id="department-pk"><span class="fragment">PK</span></td>
+                                <th>DepartmentId</th>
+                                <td>101</td>
+                            </tr>
+                            <tr>
+                                <td><span class="fragment">UK</span></td>
+                                <th>DepartmentName</th>
+                                <td>ОБАС ALM</td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </section>
+                <aside class="notes">
+                    Давайте рассмотрим таблицу, которую мог создать один из менеджеров. Какие вы могли бы сделать предложения по улучшению структуры
+                    таблицы? 5 Минут, работаем в группах, каждая группа делаем доклад 2 минуты
+                </aside>
+            </section>
+            <section>
+                <section>Учебная БД</section>
+                <section data-background-image="pictures/dw-schema.png" data-background-size="100%"></section>
             </section>
             <section>
                 Next slide
@@ -322,6 +334,14 @@ order by col5_modified desc
                 { src: 'plugin/notes/notes.js', async: true },
                 { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
             ]
+        });
+        Reveal.addEventListener('fragmentshown', function (event) {
+            $("#normalization_lines").HTMLSVGconnect({
+                paths: [
+                    { start: "#employee-pk", end: "#employee-fk" },
+                    { start: "#department-pk", end: "#department-fk" }
+                ]
+            });
         });
     </script>
 </body>
