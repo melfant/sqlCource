@@ -25,3 +25,9 @@ div.right {
     float: right;
     width: 50%;
 }
+
+section img.invert {
+    filter: invert(86.6%);
+    box-shadow: 0 0 0px;
+    border: 0px solid black;
+}

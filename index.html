@@ -28,48 +28,50 @@
     <div class="reveal">
         <div class="slides">
             <section>
-                <h1>Повторение</h1>
-                <h3>Чему вы научились в дистанционной части?</h3>
-            </section>
-            <section>
-                <p>Это мы умеем</p>
-                <pre><code data-trim>
-select distinct 
-    col1, col2 as column2, col3 column3, col4 [column 4], 
-    case 
-        when datediff(month, col5, current_timestamp) < 5 then 1
-        else 0
-    end as col5_modified, --Болгов, 2017-09-07
-    len(col6) as len_col_6,
-    col7 + '_' + isnull(col8, '') as col7_and_col8,
-    cast('24' as int) as twenty_four,
-    *
-from table
-where col1 <= 0 or col2 like '%pattern%' and col3 is null
-order by col4 desc, col2 asc, col1
-						</code></pre>
-                <aside class=notes>
-                    Что знакомого в запросе? Что происходит в каждом столбце?
-                </aside>
-            </section>
-            <section>
-                <p>Каков логический порядок выполнения запроса?</p>
-                <pre><code data-trim data-noescape class="sql">
-select distinct 
-    case 
-        when datediff(month, col5, current_timestamp) < 5 then 1
-        else 0
-    end as col5_modified
-from table
-where col1 <= 0 or col2 like '%pattern%' and col3 is null
-order by col5_modified desc
-                        </code></pre>
-                <pre class="fragment"><code>1. from table</code></pre>
-                <pre class="fragment"><code>2. where --какой порядок?</code></pre>
-                <pre class="fragment"><code>3. case ... as col5_modified</code></pre>
-                <pre class="fragment"><code>4. distinct</code></pre>
-                <pre class="fragment"><code>5. order by col5_modified desc</code></pre>
-                <pre class="fragment"><code>6. select</code></pre>
+                <section>
+                    <h1>Вспомним,</h1>
+                    <h3>Чему мы научились в дистанционной части</h3>
+                </section>
+                <section>
+                    <p>Это мы умеем</p>
+                    <pre><code data-trim>
+            select distinct 
+                col1, col2 as column2, col3 column3, col4 [column 4], 
+                case 
+                    when datediff(month, col5, current_timestamp) < 5 then 1
+                    else 0
+                end as col5_modified, --Болгов, 2017-09-07
+                len(col6) as len_col_6,
+                col7 + '_' + isnull(col8, '') as col7_and_col8,
+                cast('24' as int) as twenty_four,
+                *
+            from table
+            where col1 <= 0 or col2 like '%pattern%' and col3 is null
+            order by col4 desc, col2 asc, col1
+                                    </code></pre>
+                    <aside class=notes>
+                        Что знакомого в запросе? Что происходит в каждом столбце?
+                    </aside>
+                </section>
+                <section>
+                    <p>Каков логический порядок выполнения запроса?</p>
+                    <pre><code data-trim data-noescape class="sql">
+            select distinct 
+                case 
+                    when datediff(month, col5, current_timestamp) < 5 then 1
+                    else 0
+                end as col5_modified
+            from table
+            where col1 <= 0 or col2 like '%pattern%' and col3 is null
+            order by col5_modified desc
+                                    </code></pre>
+                    <pre class="fragment"><code>1. from table</code></pre>
+                    <pre class="fragment"><code>2. where --какой порядок?</code></pre>
+                    <pre class="fragment"><code>3. case ... as col5_modified</code></pre>
+                    <pre class="fragment"><code>4. distinct</code></pre>
+                    <pre class="fragment"><code>5. order by col5_modified desc</code></pre>
+                    <pre class="fragment"><code>6. select</code></pre>
+                </section>
             </section>
             <section>
                 <h1>Запросы к нескольким таблицам</h1>
@@ -147,7 +149,7 @@ order by col5_modified desc
                     <div class="left">
                         <table class="table-small">
                             <tr>
-                                <td><span class="fragment" id="employee-pk">PK</span></td>
+                                <td><span class="fragment">PK</span></td>
                                 <th>EmployeeId</th>
                                 <td>1</td>
                                 <td>2</td>
@@ -183,13 +185,13 @@ order by col5_modified desc
                                 <td>NULL</td>
                             </tr>
                             <tr>
-                                <td id="department-fk"><span class="fragment">FK</span></td>
+                                <td><span class="fragment">FK</span></td>
                                 <th>DepartmentId</th>
                                 <td>101</td>
                                 <td>101</td>
                             </tr>
                             <tr>
-                                <td id="employee-fk"><span class="fragment">FK</span></td>
+                                <td><span class="fragment">FK</span></td>
                                 <th>BoossId</th>
                                 <td>2</td>
                                 <td>NULL</td>
@@ -205,7 +207,7 @@ order by col5_modified desc
                     <div class="right">
                         <table class="table-small">
                             <tr>
-                                <td id="department-pk"><span class="fragment">PK</span></td>
+                                <td><span class="fragment">PK</span></td>
                                 <th>DepartmentId</th>
                                 <td>101</td>
                             </tr>
@@ -215,7 +217,6 @@ order by col5_modified desc
                                 <td>ОБАС ALM</td>
                             </tr>
                         </table>
-
                     </div>
                 </section>
                 <aside class="notes">
@@ -224,98 +225,138 @@ order by col5_modified desc
                 </aside>
             </section>
             <section>
+                <p><strong>PK</strong> - primary key, столбец (или комбинация), которое уникальным образом определяем запись
+                    в таблице. Бизнес-смысла нет.</p>
+                <p class=fragment><strong>UK</strong> - Unique key, уникальная комбинация столбцов. Как правило, имеет бизнес-смысл.</p>
+                <p class=fragment><strong>FK</strong> - Foreign key, ограничение, гарантирующее, что значения в столбце будут только из множества
+                    значений определенного PK</p>
+            </section>
+            <section>
                 <section>Учебная БД</section>
                 <section data-background-image="pictures/dw-schema.png" data-background-size="100%"></section>
             </section>
             <section>
-                Next slide
+                <h3>Соединение таблиц</h3>
+                <p>Для соединения двух и более таблиц используется оператор
+                    <mark>JOIN</mark>
+                </p>
+                <p class=fragment>* Похож на ВПР (vlookup)</p>
             </section>
             <section>
-                Next slide
+                <div class=left>
+                    <table class="table-small">
+                        <caption>EnglishNumbers</caption>
+                        <tr>
+                            <td>PK</td>
+                            <th>NumberId</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <th>NumberName</th>
+                        </tr>
+                    </table>
+                    <br>
+                    <table class="table-small">
+                        <caption>FrenchNumbers</caption>
+                        <tr>
+                            <td>PK</td>
+                            <th>NumberId</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <th>NumberName</th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="right">
+                    <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+join FrenchNumbers f on 
+    e.NumberId = 
+        f.NumberId
+where e.NumberId > 0</code></pre>
+                </div>
             </section>
             <section>
-                Next slide
+                <h4>Порядок выполнения запроса</h4>
+                <div class="left">
+                    <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+join FrenchNumbers f on 
+    e.NumberId = 
+        f.NumberId
+where e.NumberId > 0</code></pre>
+                </div>
+                <div class="right">
+                    <pre class="fragment"><code>1. from EnglishNumbers as e</code></pre>
+                    <pre class="fragment"><code>2. join FrenchNumbers f on ...</code></pre>
+                    <pre class="fragment"><code>3. where ...</code></pre>
+                    <pre class="fragment"><code>4. evaluate columns</code></pre>
+                    <pre class="fragment"><code>5. select</code></pre>
+                </div>
             </section>
             <section>
-                Next slide
+                <section>
+                    <h3>Как работает JOIN?</h3>
+                    <div class="left">
+                        <img class="invert" src="pictures/joinmapping.png" alt="join mapping">
+                    </div>
+                    <div class="right">
+                        <p>Для каждой строки из левой таблицы просматриваются все строки правой.</p>
+                        <p>Для каждой пары строк вычисляется предикат соединения</p>
+                        <p>Если
+                            <mark>TRUE</mark> - пара строк попадает в выборку</p>
+                    </div>
+                </section>
+                <section>
+                    <p>INNER JOIN == JOIN</p>
+                    <img class="invert" src="pictures/join-schema.png" alt="join-schema">
+                </section>
             </section>
             <section>
-                Next slide
+                <p>В одном запросе можно присоединять несколько таблиц (и даже ту же самую таблицу)</p>
+                <pre><code>select *
+from table1 t1
+join table2 t2 on t1.id = t2.id
+join table3 t3 on t3.id = t2.id
+join table1 t1_par on t1.parent_id = t1_par.id
+....</code></pre>
             </section>
             <section>
-                Next slide
+                <section>
+                    <h3>Join - Задача 1</h3>
+                    <p>Написать запрос, выбирающий для каждого продукта\товара (таблица DimProduct), его имя на английском языке
+                        (EnglishProductName) и название под-категории на Английском языке(таблица DimSubCategory, столбец
+                        EnglishProductSubcategoryName)
+                    </p>
+                </section>
+                <section>
+                    <h3>Join - Задача 2</h3>
+                    <p>Модифицируйте запрос из предыдущей задачи таким образом, чтобы выбирались только продукты\товары красного
+                        цвета.
+                    </p>
+                </section>
+                <section>
+                    <h3>Join - Задача 3</h3>
+                    <p>Добавьте к предыдущему запросу еще название Категории продукта на английском языке.</p>
+                </section>
+                <section>
+                    <h3>Join - Задача 4*</h3>
+                    <p>Написать запрос, выбирающий id сотрудников, у которых первая буква имени совпадает с первой буковй имени
+                        начальника
+                    </p>
+                </section>
             </section>
             <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
-            </section>
-            <section>
-                Next slide
+                <h1>Конец!</h1>
             </section>
         </div>
     </div>
@@ -334,14 +375,6 @@ order by col5_modified desc
                 { src: 'plugin/notes/notes.js', async: true },
                 { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
             ]
-        });
-        Reveal.addEventListener('fragmentshown', function (event) {
-            $("#normalization_lines").HTMLSVGconnect({
-                paths: [
-                    { start: "#employee-pk", end: "#employee-fk" },
-                    { start: "#department-pk", end: "#department-fk" }
-                ]
-            });
         });
     </script>
 </body>
