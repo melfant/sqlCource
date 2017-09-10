@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="lib/css/zenburn.css">
 
     <!-- custom user theme -->
+    <link rel="stylesheet" href="lib/css/bootstrap.css">
     <link rel="stylesheet" href="css/theme/tables.css">
     <!-- Printing and PDF exports -->
     <script>
@@ -38,20 +39,19 @@
                 <section>
                     <p>Это мы умеем</p>
                     <pre><code>
-            select distinct 
-                col1, col2 as column2, col3 column3, col4 [column 4], 
-                case 
-                    when datediff(month, col5, current_timestamp) < 5 then 1
-                    else 0
-                end as col5_modified, --Болгов, 2017-09-07
-                len(col6) as len_col_6,
-                col7 + '_' + isnull(col8, '') as col7_and_col8,
-                cast('24' as int) as twenty_four,
-                *
-            from table
-            where col1 <= 0 or col2 like '%pattern%' and col3 is null
-            order by col4 desc, col2 asc, col1
-                                    </code></pre>
+select distinct 
+    col1, col2 as column2, col3 column3, col4 [column 4], 
+    case 
+        when datediff(month, col5, current_timestamp) < 5 then 1
+        else 0
+    end as col5_modified, --Болгов, 2017-09-07
+    len(col6) as len_col_6,
+    col7 + '_' + isnull(col8, '') as col7_and_col8,
+    cast('24' as int) as twenty_four,
+    *
+from table
+where col1 <= 0 or col2 like '%pattern%' and col3 is null
+order by col4 desc, col2 asc, col1</code></pre>
                     <h4>&darr;</h4>
                     <aside class=notes>
                         Что знакомого в запросе? Что происходит в каждом столбце?
@@ -60,15 +60,14 @@
                 <section>
                     <p>Каков логический порядок выполнения запроса?</p>
                     <pre><code  class="sql">
-            select distinct 
-                case 
-                    when datediff(month, col5, current_timestamp) < 5 then 1
-                    else 0
-                end as col5_modified
-            from table
-            where col1 <= 0 or col2 like '%pattern%' and col3 is null
-            order by col5_modified desc
-                                    </code></pre>
+select distinct 
+    case 
+        when datediff(month, col5, current_timestamp) < 5 then 1
+        else 0
+    end as col5_modified
+from table
+where col1 <= 0 or col2 like '%pattern%' and col3 is null
+order by col5_modified desc</code></pre>
                     <pre class="fragment"><code>1. from table</code></pre>
                     <pre class="fragment"><code>2. where --какой порядок?</code></pre>
                     <pre class="fragment"><code>3. case ... as col5_modified</code></pre>
@@ -153,77 +152,79 @@
                     <h4 class=fragment>&darr;</h4>
                 </section>
                 <section>
-                    <div class="left">
-                        <table class="table-small">
-                            <tr>
-                                <td><span class="fragment">PK</span></td>
-                                <th>EmployeeId</th>
-                                <td>1</td>
-                                <td>2</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <th>FirstName</th>
-                                <td>Александр</td>
-                                <td>Игорь</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <th>MiddleName</th>
-                                <td>Викторович</td>
-                                <td>Анатольевич</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <th>LastName</th>
-                                <td>Болгов</td>
-                                <td>Нейштадт</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <th>HireDate</th>
-                                <td>2014-04-01</td>
-                                <td>NULL</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <th>BirthDate</th>
-                                <td>1988-05-30</td>
-                                <td>NULL</td>
-                            </tr>
-                            <tr>
-                                <td><span class="fragment">FK</span></td>
-                                <th>DepartmentId</th>
-                                <td>101</td>
-                                <td>101</td>
-                            </tr>
-                            <tr>
-                                <td><span class="fragment">FK</span></td>
-                                <th>BoossId</th>
-                                <td>2</td>
-                                <td>NULL</td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <th>Salary</th>
-                                <td>890</td>
-                                <td>1890</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="right">
-                        <table class="table-small">
-                            <tr>
-                                <td><span class="fragment">PK</span></td>
-                                <th>DepartmentId</th>
-                                <td>101</td>
-                            </tr>
-                            <tr>
-                                <td><span class="fragment">UK</span></td>
-                                <th>DepartmentName</th>
-                                <td>ОБАС ALM</td>
-                            </tr>
-                        </table>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <table class="table-small">
+                                <tr>
+                                    <td><span class="fragment">PK</span></td>
+                                    <th>EmployeeId</th>
+                                    <td>1</td>
+                                    <td>2</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <th>FirstName</th>
+                                    <td>Александр</td>
+                                    <td>Игорь</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <th>MiddleName</th>
+                                    <td>Викторович</td>
+                                    <td>Анатольевич</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <th>LastName</th>
+                                    <td>Болгов</td>
+                                    <td>Нейштадт</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <th>HireDate</th>
+                                    <td>2014-04-01</td>
+                                    <td>NULL</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <th>BirthDate</th>
+                                    <td>1988-05-30</td>
+                                    <td>NULL</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="fragment">FK</span></td>
+                                    <th>DepartmentId</th>
+                                    <td>101</td>
+                                    <td>101</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="fragment">FK</span></td>
+                                    <th>BoossId</th>
+                                    <td>2</td>
+                                    <td>NULL</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <th>Salary</th>
+                                    <td>890</td>
+                                    <td>1890</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-xs-6">
+                            <table class="table-small">
+                                <tr>
+                                    <td><span class="fragment">PK</span></td>
+                                    <th>DepartmentId</th>
+                                    <td>101</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="fragment">UK</span></td>
+                                    <th>DepartmentName</th>
+                                    <td>ОБАС ALM</td>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 </section>
                 <aside class="notes">
@@ -254,48 +255,33 @@
                 <p class=fragment>* Похож на ВПР (vlookup)</p>
             </section>
             <section>
-                <div class=left>
-                    <table class="table-small">
-                        <caption>EnglishNumbers</caption>
-                        <tr>
-                            <td>PK</td>
-                            <th>NumberId</th>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <th>NumberName</th>
-                        </tr>
-                    </table>
-                    <br>
-                    <table class="table-small">
-                        <caption>FrenchNumbers</caption>
-                        <tr>
-                            <td>PK</td>
-                            <th>NumberId</th>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <th>NumberName</th>
-                        </tr>
-                    </table>
-                </div>
-                <div class="right">
-                    <pre><code>select 
-    e.NumberName as EngNumber,
-    f.NumberName as FreNumber,
-    e.*,
-    *
-from EnglishNumbers as e
-join FrenchNumbers f on 
-    e.NumberId = 
-        f.NumberId
-where e.NumberId > 0</code></pre>
-                </div>
-            </section>
-            <section>
-                <section>
-                    <h3>Как работает JOIN?</h3>
-                    <div class="left">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <table class="table-small">
+                            <caption>EnglishNumbers</caption>
+                            <tr>
+                                <td>PK</td>
+                                <th>NumberId</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>NumberName</th>
+                            </tr>
+                        </table>
+                        <br>
+                        <table class="table-small">
+                            <caption>FrenchNumbers</caption>
+                            <tr>
+                                <td>PK</td>
+                                <th>NumberId</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>NumberName</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-xs-6">
                         <pre><code>select 
     e.NumberName as EngNumber,
     f.NumberName as FreNumber,
@@ -306,12 +292,33 @@ join FrenchNumbers f on
     e.NumberId = 
         f.NumberId
 where e.NumberId > 0</code></pre>
-                        <img class="invert" src="pictures/joinmapping.png" alt="join mapping">
                     </div>
-                    <div class="right">
-                        <p>Для каждой пары строк вычисляется предикат соединения</p>
-                        <p>Если предикат
-                            <mark>TRUE</mark> - пара строк попадает в выборку</p>
+                </div>
+            </section>
+            <section>
+                <section>
+                    <h3>Как работает JOIN?</h3>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+join FrenchNumbers f on 
+    e.NumberId = 
+        f.NumberId
+where e.NumberId > 0</code></pre>
+                            <img class="invert" src="pictures/joinmapping-inner-join.png" alt="join mapping">
+
+                        </div>
+                        <div class="col-xs-6">
+                            <p>Для каждой пары строк вычисляется предикат соединения</p>
+                            <p>Если предикат
+                                <mark>TRUE</mark> - пара строк попадает в выборку</p>
+
+                        </div>
                     </div>
                     <h4>&darr;</h4>
                 </section>
@@ -322,8 +329,10 @@ where e.NumberId > 0</code></pre>
             </section>
             <section>
                 <h4>Порядок выполнения запроса</h4>
-                <div class="left">
-                    <pre><code>select 
+
+                <div class="row">
+                    <div class="col-xs-6">
+                        <pre><code>select 
     e.NumberName as EngNumber,
     f.NumberName as FreNumber,
     e.*,
@@ -333,13 +342,14 @@ join FrenchNumbers f on
     e.NumberId = 
         f.NumberId
 where e.NumberId > 0</code></pre>
-                </div>
-                <div class="right">
-                    <pre class="fragment"><code>1. from EnglishNumbers as e</code></pre>
-                    <pre class="fragment"><code>2. join FrenchNumbers f on ...</code></pre>
-                    <pre class="fragment"><code>3. where ...</code></pre>
-                    <pre class="fragment"><code>4. evaluate columns</code></pre>
-                    <pre class="fragment"><code>5. select</code></pre>
+                    </div>
+                    <div class="col-xs-6">
+                        <pre class="fragment"><code>1. from EnglishNumbers as e</code></pre>
+                        <pre class="fragment"><code>2. join FrenchNumbers f on ...</code></pre>
+                        <pre class="fragment"><code>3. where ...</code></pre>
+                        <pre class="fragment"><code>4. evaluate columns</code></pre>
+                        <pre class="fragment"><code>5. select</code></pre>
+                    </div>
                 </div>
             </section>
             <section>
@@ -385,70 +395,76 @@ join table1 t1_par on t1.parent_id = t1_par.id
             </section>
             <section>
                 <p>Как оставить строку Two - 2 из EnglishNumbers в выборке?</p>
-                <div class="left">
-                    <img class="invert" src="pictures/joinmapping.png" alt="join mapping">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <img class="invert fragment fade-out" data-fragment-index="0" src="pictures/joinmapping-left-join-empty.png" alt="join mapping">
+                        <img style="position:absolute;left:12px;" class="invert fragment fade-in" data-fragment-index="0" src="pictures/joinmapping-left-join.png"
+                            alt="join mapping"></div>
+                    <div class="col-xs-6">
+                        <table class="table-small">
+                            <caption>EnglishNumbers</caption>
+                            <tr>
+                                <td>PK</td>
+                                <th>NumberId</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>NumberName</th>
+                            </tr>
+                        </table>
+                        <br>
+                        <table class="table-small">
+                            <caption>FrenchNumbers</caption>
+                            <tr>
+                                <td>PK</td>
+                                <th>NumberId</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>NumberName</th>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
-                <div class="right">
+                <div class="row">
+                    <div class="col fragment" data-fragment-index="0">
+                        <p>Idea!!</p>
+                        <h2>LEFT JOIN</h2>
+                    </div>
+                </div>
 
-                    <table class="table-small">
-                        <caption>EnglishNumbers</caption>
-                        <tr>
-                            <td>PK</td>
-                            <th>NumberId</th>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <th>NumberName</th>
-                        </tr>
-                    </table>
-                    <br>
-                    <table class="table-small">
-                        <caption>FrenchNumbers</caption>
-                        <tr>
-                            <td>PK</td>
-                            <th>NumberId</th>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <th>NumberName</th>
-                        </tr>
-                    </table>
-                </div>
-                <div class="fragment">
-                    <p>Idea!!</p>
-                    <h2>LEFT JOIN</h2>
-                </div>
 
             </section>
             <section>
                 <h3>left join</h3>
-                <div class=left>
-                    <table class="table-small">
-                        <caption>EnglishNumbers</caption>
-                        <tr>
-                            <td>PK</td>
-                            <th>NumberId</th>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <th>NumberName</th>
-                        </tr>
-                    </table>
-                    <br>
-                    <table class="table-small">
-                        <caption>FrenchNumbers</caption>
-                        <tr>
-                            <td>PK</td>
-                            <th>NumberId</th>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <th>NumberName</th>
-                        </tr>
-                    </table>
-                </div>
-                <div class="right">
-                    <pre><code data-noescape>select 
+                <div class="row">
+                    <div class="col-xs-6">
+                        <table class="table-small">
+                            <caption>EnglishNumbers</caption>
+                            <tr>
+                                <td>PK</td>
+                                <th>NumberId</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>NumberName</th>
+                            </tr>
+                        </table>
+                        <br>
+                        <table class="table-small">
+                            <caption>FrenchNumbers</caption>
+                            <tr>
+                                <td>PK</td>
+                                <th>NumberId</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>NumberName</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-xs-6">
+                        <pre><code data-noescape>select 
     e.NumberName as EngNumber,
     f.NumberName as FreNumber,
     e.*,
@@ -458,14 +474,16 @@ from EnglishNumbers as e
     e.NumberId = 
         f.NumberId
 where e.NumberId > 0</code></pre>
+                    </div>
                 </div>
             </section>
 
             <section>
                 <section>
                     <h3>Как работает LEFT JOIN?</h3>
-                    <div class="left">
-                        <pre><code>select 
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <pre><code>select 
     e.NumberName as EngNumber,
     f.NumberName as FreNumber,
     e.*,
@@ -475,14 +493,14 @@ join FrenchNumbers f on
     e.NumberId = 
         f.NumberId
 where e.NumberId > 0</code></pre>
-                        <img class="invert" src="pictures/joinmapping.png" alt="join mapping">
-                    </div>
-                    <div class="right">
-                        <p>Для каждой пары строк вычисляется предикат соединения</p>
-                        <p>Если предикат
-                            <mark>TRUE</mark> - пара строк попадает в выборку</p>
-                        <mark>иначе,</mark>
-                        строка Левой таблицы попадает в выборку, а вместо правой - подставляются NULL
+                            <img class="invert" src="pictures/joinmapping-left-join.png" alt="join mapping"></div>
+                        <div class="col-xs-6">
+                            <p>Для каждой пары строк вычисляется предикат соединения</p>
+                            <p>Если предикат
+                                <mark>TRUE</mark> - пара строк попадает в выборку</p>
+                            <mark>иначе,</mark>
+                            строка Левой таблицы попадает в выборку, а вместо правой - подставляются NULL
+                        </div>
                     </div>
                     <h4>&darr;</h4>
                 </section>
@@ -494,8 +512,8 @@ where e.NumberId > 0</code></pre>
             <section>
                 <h3>Вопрос</h3>
                 <p class="fragment">В чем разница?</p>
-                <div class="fragment">
-                    <div class="left">
+                <div class="row fragment">
+                    <div class="col-xs-6">
                         <pre><code>select 
     e.NumberName as EngNumber,
     f.NumberName as FreNumber,
@@ -507,7 +525,7 @@ left join FrenchNumbers f
         f.NumberId
 where e.NumberId > 0</code></pre>
                     </div>
-                    <div class="right">
+                    <div class="col-xs-6">
                         <pre><code>select 
     e.NumberName as EngNumber,
     f.NumberName as FreNumber,
@@ -520,11 +538,13 @@ left join EnglishNumbers as e
 where f.NumberId > 0</code></pre>
                     </div>
                 </div>
+
             </section>
             <section>
                 <h4>Порядок выполнения запроса</h4>
-                <div class="left">
-                    <pre><code>select 
+                <div class="row">
+                    <div class="col-xs-6">
+                        <pre><code>select 
     e.NumberName as EngNumber,
     f.NumberName as FreNumber,
     e.*,
@@ -534,14 +554,15 @@ left join FrenchNumbers f
     on e.NumberId = 
         f.NumberId
 where e.NumberId > 0</code></pre>
-                </div>
-                <div class="right">
-                    <pre class="fragment"><code>1. from EnglishNumbers as e</code></pre>
-                    <pre class="fragment"><code>2. left join FrenchNumbers f 
-on ...</code></pre>
-                    <pre class="fragment"><code>3. where ...</code></pre>
-                    <pre class="fragment"><code>4. evaluate columns</code></pre>
-                    <pre class="fragment"><code>5. select</code></pre>
+                    </div>
+                    <div class="col-xs-6">
+                        <pre class="fragment"><code>1. from EnglishNumbers as e</code></pre>
+                        <pre class="fragment"><code>2. left join FrenchNumbers f 
+    on ...</code></pre>
+                        <pre class="fragment"><code>3. where ...</code></pre>
+                        <pre class="fragment"><code>4. evaluate columns</code></pre>
+                        <pre class="fragment"><code>5. select</code></pre>
+                    </div>
                 </div>
             </section>
             <section>
@@ -576,9 +597,95 @@ left join table1 t1_par on t1.parent_id = t1_par.id
                     <h1>&darr;</h1>
                 </section>
             </section>
+
+            <section>
+                <section>
+                    <h3>RIGHT JOIN</h3>
+                    <p>это тоже самое, что и LEFT JOIN, где таблицы поменяли местами</p>
+                </section>
+                <section>
+                    <h4>Как переписать запрос с использованием right join?</h4>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+left join FrenchNumbers f 
+    on e.NumberId = 
+        f.NumberId</code></pre>
+                        </div>
+                        <div class="col-xs-6 fragment">
+                            <pre><code data-noescape>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from FrenchNumbers f
+<mark>right</mark> join EnglishNumbers as e
+    on e.NumberId = 
+        f.NumberId</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <img class="invert" src="pictures/joinmapping-right-join.png" alt="right-join">
+                </section>
+            </section>
+
+            <section>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p>Как оставить строки правой таблицы и строки левой таблицы в выборке?</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <img class="invert fragment fade-out" data-fragment-index="0" src="pictures/joinmapping-full-join-empty.png" alt="join mapping">
+                        <img style="position:absolute;left:12px;" class="invert fragment fade-in" data-fragment-index="0" src="pictures/joinmapping-full-join.png"
+                            alt="join mapping">
+                    </div>
+                    <div class="col-xs-6">
+                        <table class="table-small">
+                            <caption>EnglishNumbers</caption>
+                            <tr>
+                                <td>PK</td>
+                                <th>NumberId</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>NumberName</th>
+                            </tr>
+                        </table>
+                        <br>
+                        <table class="table-small">
+                            <caption>FrenchNumbers</caption>
+                            <tr>
+                                <td>PK</td>
+                                <th>NumberId</th>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <th>NumberName</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row fragment " data-fragment-index="0">
+                    <div class="col">
+                        <p>Idea!!</p>
+                        <h2>FULL JOIN</h2>
+                    </div>
+                </div>
+            </section>
+
             <section>
                 <h1>Конец!</h1>
             </section>
+
         </div>
     </div>
 
