@@ -27,6 +27,8 @@
 <body>
     <div class="reveal">
         <div class="slides">
+
+
             <section>
                 <section>
                     <h1>Вспомним,</h1>
@@ -35,7 +37,7 @@
                 </section>
                 <section>
                     <p>Это мы умеем</p>
-                    <pre><code data-trim>
+                    <pre><code>
             select distinct 
                 col1, col2 as column2, col3 column3, col4 [column 4], 
                 case 
@@ -50,14 +52,14 @@
             where col1 <= 0 or col2 like '%pattern%' and col3 is null
             order by col4 desc, col2 asc, col1
                                     </code></pre>
-                                    <h4>&darr;</h4>
+                    <h4>&darr;</h4>
                     <aside class=notes>
                         Что знакомого в запросе? Что происходит в каждом столбце?
                     </aside>
                 </section>
                 <section>
                     <p>Каков логический порядок выполнения запроса?</p>
-                    <pre><code data-trim data-noescape class="sql">
+                    <pre><code  class="sql">
             select distinct 
                 case 
                     when datediff(month, col5, current_timestamp) < 5 then 1
@@ -307,9 +309,8 @@ where e.NumberId > 0</code></pre>
                         <img class="invert" src="pictures/joinmapping.png" alt="join mapping">
                     </div>
                     <div class="right">
-                        <p>Для каждой строки из левой таблицы просматриваются все строки правой.</p>
                         <p>Для каждой пары строк вычисляется предикат соединения</p>
-                        <p>Если
+                        <p>Если предикат
                             <mark>TRUE</mark> - пара строк попадает в выборку</p>
                     </div>
                     <h4>&darr;</h4>
@@ -380,6 +381,199 @@ join table1 t1_par on t1.parent_id = t1_par.id
                     <p>Напишите запрос, выбирающий id сотрудников, у которых первая буква имени совпадает с первой буковй имени
                         начальника
                     </p>
+                </section>
+            </section>
+            <section>
+                <p>Как оставить строку Two - 2 из EnglishNumbers в выборке?</p>
+                <div class="left">
+                    <img class="invert" src="pictures/joinmapping.png" alt="join mapping">
+                </div>
+                <div class="right">
+
+                    <table class="table-small">
+                        <caption>EnglishNumbers</caption>
+                        <tr>
+                            <td>PK</td>
+                            <th>NumberId</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <th>NumberName</th>
+                        </tr>
+                    </table>
+                    <br>
+                    <table class="table-small">
+                        <caption>FrenchNumbers</caption>
+                        <tr>
+                            <td>PK</td>
+                            <th>NumberId</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <th>NumberName</th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="fragment">
+                    <p>Idea!!</p>
+                    <h2>LEFT JOIN</h2>
+                </div>
+
+            </section>
+            <section>
+                <h3>left join</h3>
+                <div class=left>
+                    <table class="table-small">
+                        <caption>EnglishNumbers</caption>
+                        <tr>
+                            <td>PK</td>
+                            <th>NumberId</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <th>NumberName</th>
+                        </tr>
+                    </table>
+                    <br>
+                    <table class="table-small">
+                        <caption>FrenchNumbers</caption>
+                        <tr>
+                            <td>PK</td>
+                            <th>NumberId</th>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <th>NumberName</th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="right">
+                    <pre><code data-noescape>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+<mark>left</mark> join FrenchNumbers f on 
+    e.NumberId = 
+        f.NumberId
+where e.NumberId > 0</code></pre>
+                </div>
+            </section>
+
+            <section>
+                <section>
+                    <h3>Как работает LEFT JOIN?</h3>
+                    <div class="left">
+                        <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+join FrenchNumbers f on 
+    e.NumberId = 
+        f.NumberId
+where e.NumberId > 0</code></pre>
+                        <img class="invert" src="pictures/joinmapping.png" alt="join mapping">
+                    </div>
+                    <div class="right">
+                        <p>Для каждой пары строк вычисляется предикат соединения</p>
+                        <p>Если предикат
+                            <mark>TRUE</mark> - пара строк попадает в выборку</p>
+                        <mark>иначе,</mark>
+                        строка Левой таблицы попадает в выборку, а вместо правой - подставляются NULL
+                    </div>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
+                    <p>LEFT OUTER JOIN == LEFT JOIN</p>
+                    <img class="invert" src="pictures/left-join-schema.png" alt="left-join-schema">
+                </section>
+            </section>
+            <section>
+                <h3>Вопрос</h3>
+                <p class="fragment">В чем разница?</p>
+                <div class="fragment">
+                    <div class="left">
+                        <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+left join FrenchNumbers f 
+    on e.NumberId = 
+        f.NumberId
+where e.NumberId > 0</code></pre>
+                    </div>
+                    <div class="right">
+                        <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from FrenchNumbers f
+left join EnglishNumbers as e
+    on e.NumberId = 
+        f.NumberId
+where f.NumberId > 0</code></pre>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h4>Порядок выполнения запроса</h4>
+                <div class="left">
+                    <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+left join FrenchNumbers f 
+    on e.NumberId = 
+        f.NumberId
+where e.NumberId > 0</code></pre>
+                </div>
+                <div class="right">
+                    <pre class="fragment"><code>1. from EnglishNumbers as e</code></pre>
+                    <pre class="fragment"><code>2. left join FrenchNumbers f 
+on ...</code></pre>
+                    <pre class="fragment"><code>3. where ...</code></pre>
+                    <pre class="fragment"><code>4. evaluate columns</code></pre>
+                    <pre class="fragment"><code>5. select</code></pre>
+                </div>
+            </section>
+            <section>
+                <p>join и left join можно комбинировать в одном запросе</p>
+                <pre><code>select *
+from table1 t1
+left join table2 t2 on t1.id = t2.id
+join table3 t3 on t3.id = t2.id
+left join table1 t1_par on t1.parent_id = t1_par.id
+....</code></pre>
+                <p class="fragment">join-инструкции выполняются последовательно!</p>
+            </section>
+            <section>
+                <section>
+                    <h1>Немного практики</h1>
+                    <h1>&darr;</h1>
+                </section>
+                <section>
+                    <h3>Left JOIN - Задача 1</h3>
+                    <h1>&darr;</h1>
+                </section>
+                <section>
+                    <h3>Left JOIN - Задача 2</h3>
+                    <h1>&darr;</h1>
+                </section>
+                <section>
+                    <h3>Left JOIN - Задача 3</h3>
+                    <h1>&darr;</h1>
+                </section>
+                <section>
+                    <h3>Left JOIN - Задача 4*</h3>
+                    <h1>&darr;</h1>
                 </section>
             </section>
             <section>
