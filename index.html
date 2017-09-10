@@ -884,10 +884,22 @@ where CurrencyKey in
                     <h3>Закрепим знания</h3>
                     <p>&darr;</p>
                 </section>
-                <section>Задача 1 - подзапрос</section>
-                <section>Задача 2 - подзапрос</section>
-                <section>Задача 3 - подзапрос</section>
-                <section>Задача 4* - подзапрос</section>
+                <section>
+                    <h4>Задача 1 - подзапрос</h4>
+                    <p>Написать запрос, выбирающий все продажи через реселлера (все строки таблицы FactResellerSales), у которых
+                        дата заказа приходится на второй фискальный семестр 2010 года (DimDate)</p>
+                </section>
+                <section>
+                    <h4>Задача 2 - подзапрос</h4>
+                    <p>Написать запрос, выбирающий все заказы через реселлера, скидка по которым была свыше 10% (0.1). Необходимо
+                        вывести ID заказа и дополнительный столбец SaleColor, который имеет значение 'R', если товар красного
+                        цвета, или 'O' в противном случае.</p>
+                </section>
+                <section>
+                    <h4>Задача 3* - подзапрос</h4>
+                    <p>Написать запрос, возвращающий список ID сотрудников (DimEmployee), находящихся на втором уровне подчинения.
+                        Например, Греф->Морозов->Лякин. Вывести Лякина.</p>
+                </section>
             </section>
 
             <section>
@@ -950,10 +962,26 @@ where exists
                     <h3>Порешаем задачи</h3>
                     <p>&darr;</p>
                 </section>
-                <section>Задача 1 - корелированный подзапрос</section>
-                <section>Задача 2 - корелированный подзапрос</section>
-                <section>Задача 3 - корелированный подзапрос</section>
-                <section>Задача 4* - корелированный подзапрос</section>
+                <section>
+                    <h4>Задача 1 - корелированный подзапрос</h4>
+                    <p>Для каждого реселлера (DimReseller) вывести его ID и город (City), в котором он находится. Задачу решить
+                        с помощью подзапроса.</p>
+                </section>
+                <section>
+                    <h4>Задача 2 - корелированный подзапрос</h4>
+                    <p>Написать запрос, выбирающий сотрудников (все столбцы), для которых была установлена квота в 2010 фискальном
+                        году
+                    </p>
+                </section>
+                <section>
+                    <h4>Задача 3 - корелированный подзапрос</h4>
+                    <p>Вывести все ID интернет-продаж, причиной продажи которых не был Маркетинг</p>
+                </section>
+                <section>
+                    <h4>Задача 4</h4>
+                    <p>Для каждого сотрудника вывести его ID, а также ID другого сотрудника, который будет праздновать день
+                        рождения не раньше него. Если таких сотрудников несолько, вывести минимальный ID</p>
+                </section>
             </section>
 
             <section>
@@ -988,7 +1016,7 @@ from blueProducts</code></pre>
                 <p class="fragment">* Внутри CTE можно обращатся к предыдущему CTE</p>
             </section>
 
-            <section>
+            <!--section>
                 <section>
                     <h3>Повторим табличные выражения</h3>
                     <p>&darr;</p>
@@ -997,6 +1025,100 @@ from blueProducts</code></pre>
                 <section>Задача 2 - табличные выражения</section>
                 <section>Задача 3 - табличные выражения</section>
                 <section>Задача 4* - табличные выражения</section>
+            </section-->
+
+            <section>
+                <h2>ГРУППИРОВАННЫЕ ЗАПРОСЫ</h2>
+            </section>
+            <section>
+                <h4>Кому они нужны?</h4>
+                <p class="fragment">Группированные запросы нужны для подсчета аггрегированных мер (сумм, средних и т.д.) в разрезе некоторых
+                    групп
+                </p>
+                <pre class="fragment"><code class="sql">select count(*)
+from FactResellerSales
+
+select CurrencyKey, count(*)
+from FactResellerSales
+group by CurrencyKey</code></pre>
+                <p class=fragment>Запрос становится группированным, если есть групповая функции или GROUP BY</p>
+            </section>
+            <section>
+                <h4>Какие есть групповые функции?</h4>
+                <pre><code class="sql">select count(*), -- количество строк в группе 
+    count(column), -- количество непустых
+    count(distinct column), -- количество уникальных
+    sum(column), -- сумма
+    max(column), -- максимум
+    min(column), -- минимум
+    avg(column) -- среднее
+from tbl
+group by other_column</code></pre>
+                <p class="fragment">Групповые функции игнорируют NULL</p>
+            </section>
+
+            <section>
+                <section>
+                    <h3>Попробуем написать групповой запрос</h3>
+                    <p>&darr;</p>
+                </section>
+                <section>
+                    <h4>Задача 1 - group by</h4>
+                    <p>Написать запрос, возвращающий сколько существует продуктов каждого цвета. Столбец с количеством продуктов
+                        назвать cnt </p>
+                </section>
+                <section>
+                    <h4>Задача 2 - group by</h4>
+                    <p>Написать запрос, возвращающий название категории продуктов на англ. (EnglishProductCategoryName) и количество
+                        продуктов в этой категории, таких, что средняя цена товара в категории (ListPrice) больше 100 долларов.
+                        Рассматривать только продукты черного цвета.
+                    </p>
+                </section>
+                <section>
+                    <h4>Задача 3 - group by</h4>
+                    <p>Вывести 30% самых дорогих под-категорий продуктов (EnglishProductSubcategoryName) и их среднюю стоимость
+                        (AveragePrice). для сравнения использовать среднюю стандартную стоимость.</p>
+                </section>
+                <section>
+                    <h4>Задача 4 - group by</h4>
+                    <p>Для каждого продукта вывести его ID и сумму всех продаж за все время через интернет (столбец назвать TotalInternetSales)
+                        и сумму всех продаж за все время через реселлера (назвать TotalResellerSales), а также полную сумму
+                        продаж (назвать TotalSales). Если продаж не было, во все объемы показывать 0.</p>
+                </section>
+            </section>
+
+            <section>
+                <h4>having</h4>
+                <p>используется для фильтрации на групповом уровне</p>
+                <pre class="fragment"><code class="sql">select OrderDateKey, count(*) as cnt
+from FactResellerSales
+group by OrderDateKey
+having count(*) > 3000</code></pre>
+                <p class="fragment">having применяется к группе, а не к строке</p>
+                <p class="fragment">после having можно использовать только групповые столбцы и функции</p>
+            </section>
+
+            <section>
+                <h4>Порядок исполнения запроса</h4>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <pre><code class="sql">select 
+    OrderDateKey, 
+    count(*) as cnt
+from FactResellerSales
+where UnitPrice > 10
+group by OrderDateKey
+having count(*) > 3000</code></pre>
+                    </div>
+                    <div class="col-xs-6">
+                        <pre class="fragment"><code>1. from ...</code></pre>
+                        <pre class="fragment"><code>2. where ...</code></pre>
+                        <pre class="fragment"><code>3. group by ...</code></pre>
+                        <pre class="fragment"><code>4. having ...</code></pre>
+                        <pre class="fragment"><code>5. evaluate columns ...</code></pre>
+                        <pre class="fragment"><code>6. select ...</code></pre>
+                    </div>
+                </div>
             </section>
 
             <section>
@@ -1021,6 +1143,7 @@ from blueProducts</code></pre>
                 { src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
             ]
         });
+        Reveal.configure({ slideNumber: true });
     </script>
 </body>
 
