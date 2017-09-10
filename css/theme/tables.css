@@ -21,3 +21,9 @@ section img.invert {
     box-shadow: 0 0 0px;
     border: 0px solid black;
 }
+
+.sql-exception {
+    color: red;
+    background: #3f3f3f;
+    font-family: monospace;
+}

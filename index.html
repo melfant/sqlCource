@@ -784,6 +784,221 @@ cross join table2
                     <li class="fragment">Декартово cross join</li>
                 </ol>
             </section>
+
+            <section>
+                <h1>ПОДЗАПРОСЫ</h1>
+            </section>
+            <section>
+                <section>
+                    <h3>Самостоятельные скалярные подзапросы</h3>
+                    <p>Запрос, возвращающий одно значение, может быть использован везде, где ожидается скалярное выражение</p>
+                    <div class="row">
+                        <div class="col-xs-5 fragment">
+                            <pre><code>select CurrencyAlternateKey
+from DimCurrency
+where CurrencyAlternateKey 
+    = 'USD'
+-- 100
+
+select *
+from FactInternetSales
+where CurrencyKey = 100</code></pre>
+                        </div>
+                        <div class="col-xs-7 fragment">
+                            <pre><code>select *
+from FactInternetSales
+where CurrencyKey =
+(
+    select ccy.CurrencyKey
+    from DimCurrency ccy
+    where ccy.CurrencyAlternateKey 
+        = 'USD'
+)</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <p>Если запрос вернет больше одного значения - ошибка</p>
+                    <pre><code>select *
+from FactInternetSales
+where CurrencyKey = 
+(
+    select ccy.CurrencyKey
+    from DimCurrency ccy
+    where ccy.CurrencyAlternateKey > 'A'
+)</code></pre>
+                    <pre class="fragment sql-exception">Msg 512, Level 16, State 1, Line 1
+Subquery returned more than 1 value</pre>
+                </section>
+                <section>
+                    <p>Если запрос вернет пустоту, то в выражение подставится NULL</p>
+                    <pre><code>select *
+from FactInternetSales
+where 
+(
+    select ccy.CurrencyKey
+    from DimCurrency ccy
+    where ccy.CurrencyAlternateKey = 'CCY'
+) is null</code></pre>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h3>Самостоятельный подзапрос, возвращающий столбец</h3>
+                    <p>используется в предикате, когда хочется проверить, принадлежит ли значение списку</p>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <pre><code>select *
+from FactInternetSales
+where CurrencyKey in ( 19, 100 )
+                            </code></pre>
+                            <pre class=fragment data-fragment-index="1"><code>select *
+from FactInternetSales
+where CurrencyKey not in 
+    ( 19, 100 )</code></pre>
+                        </div>
+                        <div class="col-xs-6 fragment" data-fragment-index="0">
+                            <pre><code>select * 
+from FactInternetSales 
+where CurrencyKey in 
+( 
+    select ccy.CurrencyKey 
+    from DimCurrency ccy 
+    where CurrencyAlternateKey 
+        in ('USD', 'CAD') 
+)</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h3>NULL vs IN</h3>
+                    <p class=fragment>При выполнении операции
+                        <mark>in</mark> происходит сравнение элемента слева с каждым элементом из подзапроса через равенство (=),
+                        и
+                        <mark>NULL</mark>
+                        ведет себя как при операции =</p>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h3>Закрепим знания</h3>
+                    <p>&darr;</p>
+                </section>
+                <section>Задача 1 - подзапрос</section>
+                <section>Задача 2 - подзапрос</section>
+                <section>Задача 3 - подзапрос</section>
+                <section>Задача 4* - подзапрос</section>
+            </section>
+
+            <section>
+
+                <h4>Коррелированные подзапросы</h4>
+                <p>это такие подзапросы, в которых есть зависимость от внешнего запроса</p>
+                <p></p>
+
+            </section>
+            <section>
+
+                <p class=fragment>Скалярный коррелированный подзапрос</p>
+                <pre><code data-noescape>select top 10
+    'CurrencyName is ' + (
+        select ccy.CurrencyName
+        from DimCurrency ccy
+        where <mark>sls.CurrencyKey</mark> = ccy.CurrencyKey
+    ) as CurrencyName,
+        *
+from FactInternetSales sls</code></pre>
+                <p class="fragment">Возвращает скаляр (одно значение)</p>
+                <p class="fragment">Зависит от внешнего запроса</p>
+                <p class="fragment"><i>Те же правила, что и для скалярного самостоятельного подзапроса</i></p>
+            </section>
+
+            <section>
+
+                <h4>Коррелированный подзапрос, возвращающий столбец</h4>
+                <pre><code data-noescape>select *
+from DimProduct p
+where p.ProductKey in 
+(
+    select sls.ProductKey
+    from FactInternetSales sls
+    where sls.ProductKey = <mark>p.ProductKey</mark> and 
+        sls.UnitPrice > <mark>p.StandardCost</mark>
+)</code></pre>
+                <p class="fragment">Все также, как и самостоятельном подзапросе, возвращающем столбец, за исключением зависимости от внешнего
+                    запроса
+                </p>
+            </section>
+
+            <section>
+
+                <h4>Оператор exists</h4>
+                <p class=fragment>используется в составе предиката, чтобы проверить, есть ли строки в подзапросе или нет</p>
+                <pre class=fragment><code data-noescape>select *
+from DimProduct p
+where exists
+(
+    select *
+    from FactInternetSales sls
+    where sls.ProductKey = <mark>p.ProductKey</mark> and 
+        sls.UnitPrice > <mark>p.StandardCost</mark>
+)</code></pre>
+            </section>
+
+            <section>
+                <section>
+                    <h3>Порешаем задачи</h3>
+                    <p>&darr;</p>
+                </section>
+                <section>Задача 1 - корелированный подзапрос</section>
+                <section>Задача 2 - корелированный подзапрос</section>
+                <section>Задача 3 - корелированный подзапрос</section>
+                <section>Задача 4* - корелированный подзапрос</section>
+            </section>
+
+            <section>
+                <h3>Табличные выражения</h3>
+            </section>
+            <section>
+                <h4>Производные таблицы</h4>
+                <p>Что такое табличное выражение?<br>Рассмотрим пример</p>
+                <pre><code>select *
+from 
+(
+    select *
+    from DimProduct p
+    where p.Color = 'Blue'
+) as blueProducts</code></pre>
+                <ul>
+                    <li class="fragment">Все столбцы табл. выражения должны иметь уникальные имена</li>
+                    <li class="fragment">Табличное выражение не может содержать ORDER BY без TOP</li>
+                </ul>
+            </section>
+            <section>
+                <h4>Обобщенные табличные выражения</h4>
+                <p>Common Table Expressions (CTE)</p>
+                <pre><code>with blueProducts as (
+    select *
+    from DimProduct p
+    where p.Color = 'Blue'
+)
+select *
+from blueProducts</code></pre>
+                <p class="fragment">* К CTE можно обращаться несколько раз в одном запросе</p>
+                <p class="fragment">* Внутри CTE можно обращатся к предыдущему CTE</p>
+            </section>
+
+            <section>
+                <section>
+                    <h3>Повторим табличные выражения</h3>
+                    <p>&darr;</p>
+                </section>
+                <section>Задача 1 - табличные выражения</section>
+                <section>Задача 2 - табличные выражения</section>
+                <section>Задача 3 - табличные выражения</section>
+                <section>Задача 4* - табличные выражения</section>
+            </section>
+
             <section>
                 <h1>Конец!</h1>
             </section>
