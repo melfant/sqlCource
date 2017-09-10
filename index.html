@@ -30,6 +30,7 @@
         <div class="slides">
 
 
+
             <section>
                 <section>
                     <h1>Вспомним,</h1>
@@ -353,6 +354,36 @@ where e.NumberId > 0</code></pre>
                 </div>
             </section>
             <section>
+                <h3>Вопрос</h3>
+                <p class="fragment">В чем разница?</p>
+                <div class="row fragment">
+                    <div class="col-xs-6">
+                        <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+join FrenchNumbers f 
+    on e.NumberId = 
+        f.NumberId and
+    e.NumberId > 3</code></pre>
+                    </div>
+                    <div class="col-xs-6">
+                        <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+join FrenchNumbers f 
+    on e.NumberId = 
+        f.NumberId and
+where e.NumberId > 3</code></pre>
+                    </div>
+                </div>
+            </section>
+            <section>
                 <p>В одном запросе можно присоединять несколько таблиц (и даже ту же самую таблицу)</p>
                 <pre><code>select *
 from table1 t1
@@ -360,6 +391,9 @@ join table2 t2 on t1.id = t2.id
 join table3 t3 on t3.id = t2.id
 join table1 t1_par on t1.parent_id = t1_par.id
 ....</code></pre>
+                <p class="fragment">Операции соединения логически выполняются слева-направо и в объединении участвует всегда 2 множества. Результирующее
+                    множество является входящим слева для следующей операции соединения.
+                </p>
             </section>
             <section>
                 <section>
@@ -510,11 +544,12 @@ where e.NumberId > 0</code></pre>
                 </section>
             </section>
             <section>
-                <h3>Вопрос</h3>
-                <p class="fragment">В чем разница?</p>
-                <div class="row fragment">
-                    <div class="col-xs-6">
-                        <pre><code>select 
+                <section>
+                    <h3>Вопрос</h3>
+                    <p class="fragment">В чем разница?</p>
+                    <div class="row fragment">
+                        <div class="col-xs-6">
+                            <pre><code>select 
     e.NumberName as EngNumber,
     f.NumberName as FreNumber,
     e.*,
@@ -524,9 +559,9 @@ left join FrenchNumbers f
     on e.NumberId = 
         f.NumberId
 where e.NumberId > 0</code></pre>
-                    </div>
-                    <div class="col-xs-6">
-                        <pre><code>select 
+                        </div>
+                        <div class="col-xs-6">
+                            <pre><code>select 
     e.NumberName as EngNumber,
     f.NumberName as FreNumber,
     e.*,
@@ -536,9 +571,39 @@ left join EnglishNumbers as e
     on e.NumberId = 
         f.NumberId
 where f.NumberId > 0</code></pre>
+                        </div>
                     </div>
-                </div>
-
+                </section>
+                <section>
+                    <h3>Вопрос</h3>
+                    <p class="fragment">В чем разница?</p>
+                    <div class="row fragment">
+                        <div class="col-xs-6">
+                            <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+left join FrenchNumbers f 
+    on e.NumberId = 
+        f.NumberId and
+    e.NumberId > 3</code></pre>
+                        </div>
+                        <div class="col-xs-6">
+                            <pre><code>select 
+    e.NumberName as EngNumber,
+    f.NumberName as FreNumber,
+    e.*,
+    *
+from EnglishNumbers as e
+left join FrenchNumbers f 
+    on e.NumberId = 
+        f.NumberId and
+where e.NumberId > 3</code></pre>
+                        </div>
+                    </div>
+                </section>
             </section>
             <section>
                 <h4>Порядок выполнения запроса</h4>
@@ -612,8 +677,8 @@ left join table1 t1_par on t1.parent_id = t1_par.id
     f.NumberName as FreNumber,
     e.*,
     *
-from EnglishNumbers as e
-left join FrenchNumbers f 
+from FrenchNumbers f 
+left join EnglishNumbers as e
     on e.NumberId = 
         f.NumberId</code></pre>
                         </div>
@@ -623,8 +688,8 @@ left join FrenchNumbers f
     f.NumberName as FreNumber,
     e.*,
     *
-from FrenchNumbers f
-<mark>right</mark> join EnglishNumbers as e
+from EnglishNumbers as e
+<mark>right</mark> join FrenchNumbers f
     on e.NumberId = 
         f.NumberId</code></pre>
                         </div>
@@ -636,52 +701,89 @@ from FrenchNumbers f
             </section>
 
             <section>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <p>Как оставить строки правой таблицы и строки левой таблицы в выборке?</p>
+                <section>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <p>Как оставить строки правой таблицы и строки левой таблицы в выборке?</p>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-6">
-                        <img class="invert fragment fade-out" data-fragment-index="0" src="pictures/joinmapping-full-join-empty.png" alt="join mapping">
-                        <img style="position:absolute;left:12px;" class="invert fragment fade-in" data-fragment-index="0" src="pictures/joinmapping-full-join.png"
-                            alt="join mapping">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <img class="invert" src="pictures/joinmapping-full-join.png" alt="join mapping">
+                        </div>
+                        <div class="col-xs-6">
+                            <table class="table-small">
+                                <caption>EnglishNumbers</caption>
+                                <tr>
+                                    <td>PK</td>
+                                    <th>NumberId</th>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <th>NumberName</th>
+                                </tr>
+                            </table>
+                            <br>
+                            <table class="table-small">
+                                <caption>FrenchNumbers</caption>
+                                <tr>
+                                    <td>PK</td>
+                                    <th>NumberId</th>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <th>NumberName</th>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
-                    <div class="col-xs-6">
-                        <table class="table-small">
-                            <caption>EnglishNumbers</caption>
-                            <tr>
-                                <td>PK</td>
-                                <th>NumberId</th>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <th>NumberName</th>
-                            </tr>
-                        </table>
-                        <br>
-                        <table class="table-small">
-                            <caption>FrenchNumbers</caption>
-                            <tr>
-                                <td>PK</td>
-                                <th>NumberId</th>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <th>NumberName</th>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
 
-                <div class="row fragment " data-fragment-index="0">
-                    <div class="col">
-                        <p>Idea!!</p>
-                        <h2>FULL JOIN</h2>
+                    <div class="row fragment " data-fragment-index="0">
+                        <div class="col">
+                            <p>Idea!!</p>
+                            <h2>FULL JOIN</h2>
+                        </div>
                     </div>
-                </div>
+                </section>
+                <section>
+                    <section>
+                        <p>FULL OUTER JOIN == FULL JOIN</p>
+                        <img class="invert" src="pictures/full-join-schema.png" alt="left-join-schema">
+                    </section>
+                </section>
             </section>
 
+            <section>
+                <p>А как получить декартово произведение?</p>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <img class="invert" src="pictures/cross-join-schema.png" alt="cross join">
+                    </div>
+                    <div class="col-xs-6">
+                        <pre class="fragment"><code>join ... on 1=1</code></pre>
+                        <p class="fragment">CROSS JOIN !!!</p>
+                        <pre class="fragment"><code>select *
+from table1
+cross join table2
+...</code></pre>
+                    </div>
+                </div>
+
+
+            </section>
+            <section>
+                <h3>JOIN - итоги</h3>
+                <ol>
+                    <li class="fragment">Внутренний (inner) join</li>
+                    <li class="fragment">Внешний</li>
+                    <ol>
+                        <li class="fragment">left (outer) join</li>
+                        <li class="fragment">full (outer) join</li>
+                        <li class="fragment">right (outer) join</li>
+                    </ol>
+                    <li class="fragment">Декартово cross join</li>
+                </ol>
+            </section>
             <section>
                 <h1>Конец!</h1>
             </section>
