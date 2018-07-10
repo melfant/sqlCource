@@ -30,11 +30,10 @@
         <div class="slides">
 
             <section>
-                <h2>Презентация была тут</h2>
-                <!--img src="http://qrcoder.ru/code/?https%3A%2F%2Falexbolgov.github.io%2FSqlTrainingPresentation%2F&10&0" width="410" height="410"
-                    border="0" title="QR код"-->
-                <h1>under contruction!</h1>
-                <p>https://alexbolgov.github.io/SqlTrainingPresentation/</p>
+                <h2>Презентация тут</h2>
+                <img src="http://qrcoder.ru/code/?https%3A%2F%2Fmelfant.github.io%2FsqlCourse%2F&10&0" width="410" height="410"
+                    border="0" title="QR код">
+                <p>https://melfant.github.io/sqlCourse/</p>
             </section>
 
 
@@ -52,7 +51,7 @@ select distinct
     case 
         when datediff(month, col5, current_timestamp) < 5 then 1
         else 0
-    end as col5_modified, --Болгов, 2017-09-07
+    end as col5_modified,
     len(col6) as len_col_6,
     col7 + '_' + isnull(col8, '') as col7_and_col8,
     cast('24' as int) as twenty_four,
@@ -85,6 +84,299 @@ order by col5_modified desc</code></pre>
                 </section>
             </section>
             <section>
+                <section>
+                    <h1>ПЕРЕД ТЕМ КАК НАЧАТЬ</h1>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
+                    <h2>ВОПРОС</h2>
+                    <br/>
+                    <h5 class="fragment">Какие сложности могут возникнуть у человека, читающего чужой код?</h5>
+                </section>
+                <section>
+                    <pre>
+                        <code class="sql">SELECT SourceSystemRecordNumber,DealDate,
+CASE WHEN MaturityDate IS NULL THEN 0 else DATEDIFF(month, ValueDate , CURRENT_TIMESTAMP)end IntPayments,
+DATEADD(MONTH, DATEDIFF(month, ValueDate , CURRENT_TIMESTAMP),DealDate) LastPayment
+FROM [dwh].[vDeal] WHERE BusinessBlockCode = 'SmallBusiness'
+ORDER BY CASE WHEN MaturityDate IS NULL THEN 0 else DATEDIFF(month, ValueDate , CURRENT_TIMESTAMP) END</code>
+                    </pre>
+                    <img src="pictures/elfLanguage.jpg" class="fragment">
+                </section>
+                <section>
+                    <h2>Как справится с этими сложностями?</h2>
+                    <br/>
+                    <h5 class="fragment">Договориться об единых правилах написания кода!</h5>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h1>Базовые правила написания кода</h1>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
+                    <h4>ОФОРМЛЕНИЕ КОДА</h4>
+                    <pre>
+                        <code class="sql">select distinct
+    ProductCode,
+    case
+        when BusinessBlockCode = 'SmallBusiness'
+            then 'Малый бизнес'
+        else 'Другое'
+    end Description,
+    datediff(day, DealDate, MaturityDate) as Term,
+    *
+from dwh.vDeal
+where ProductCode = 'L_CORP_DEPO_T'</code>
+                    </pre>
+                    <pre class="fragment"><code>-- Ветвления кода отделены отступами</code></pre>
+                    <pre class="fragment"><code>-- Отступы везде одинаковые (например, один tab)</code></pre>
+                    <pre class="fragment"><code>-- Все операторы написаны в одном регистре</code></pre>
+                    <pre class="fragment"><code>-- Аргументы одинаково отделены от предыдущего значения</code></pre>
+                </section>
+                <section>
+                    <h4>СТИЛЬ ИМЕНОВАНИЯ</h4>
+                    <p>По имени объекта должно быть понятно, что в нем хранится</p>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <pre><code class="sql">select
+    v_d,
+    m_d,
+    an
+from c_d</code></pre>
+                        </div>
+                        <div class="col-xs-2" align="center"><p>vs</p></div>
+                        <div class="col-xs-5">
+                            <pre><code class="sql">select
+    ValueDate,
+    MaturityDate,
+    AccountNumber
+from CorpDeposits</code></pre>
+                        </div>
+                    </div>
+                </section>
+                <section>
+                    <h4>СТИЛЬ ИМЕНОВАНИЯ</h4>
+                    <p>В базе данных стоит придерживаться одного стиля, зависящего от договоренности команды</p>
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <div class="row"><pre><code class="sql">select
+    reportDate
+from myTable</code></pre></div>
+                            <div class="row"><pre><code class="sql">select
+    REPORT_DATE
+from MY_TABLE</code></pre></div>
+                        </div>
+                        <div class="col-xs-2"></div>
+                        <div class="col-xs-5">
+                            <div class="row"><pre><code class="sql">select
+    ReportDate
+from MyTable</code></pre></div>
+                            <div class="row"><pre><code class="sql">select
+    rprt_dt
+from m_tbl</code></pre></div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+            <section>
+                <h1>ОПЕРАЦИИ НАД МНОЖЕСТВАМИ</h1>
+            </section>
+            <section>
+                <section>
+                    <h4>ОБЪЕДИНЕНИЕ ТАБЛИЦ</h4>
+                    <p>Для объединения нескольких запросов используется оператор <mark>UNION [ALL]</mark></p>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
+                    <p>Допустим, мы хотим вывести всех клиентов CIB из 2 источников. Сравните результат двух запросов:</p>
+                    <div class="row">
+                        <div class="col-xs-6"><pre><code data-noescape class="sql">select
+    SourceSystemRecordNumber,
+    CounterpartyName
+from mbk.vMBKDeals
+where BusinessBlockCode = 'CIB'
+
+<mark>union all</mark>
+
+select
+    SourceSystemRecordNumber,
+    Name
+from dwh.vDeal
+where BusinessBlockCode = 'CIB'
+order by SourceSystemRecordNumber</code></pre></div>
+                        <div class="col-xs-6"><pre><code data-trim data-noescape class="sql">select
+    SourceSystemRecordNumber,
+    CounterpartyName
+from mbk.vMBKDeals
+where BusinessBlockCode = 'CIB'
+
+<mark>union</mark>
+
+select
+    SourceSystemRecordNumber,
+    Name
+from dwh.vDeal
+where BusinessBlockCode = 'CIB'
+order by SourceSystemRecordNumber</code></pre></div>
+                    </div>
+                </section>
+                <section>
+                    <p>Если требуется вывести в результирующий набор все строки каждого запроса вместе с повторами, необходимо использовать <mark>UNION ALL</mark>.</p>
+                    <p class="fragment">Для вывода только уникальных строк каждого запроса используется <mark>UNION</mark>.</p>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h4>ПЕРЕСЕЧЕНИЕ И РАЗНОСТЬ</h4>
+                    <p>Для выполнения операции пересечения или разности результатов запросов используется соответственно <mark>INTERSECT [ALL]</mark> и <mark>EXCEPT [ALL]</mark>.</p>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
+                    <div class="row">
+                        <pre><code data-trim data-noescape class="sql">select
+    SourceSystemRecordNumber,
+    CounterpartyName
+from mbk.vMBKDeals
+where BusinessBlockCode = 'CIB'
+
+<mark>intersect</mark>
+
+select
+    SourceSystemRecordNumber,
+    Name
+from dwh.vDeal
+where BusinessBlockCode = 'CIB'
+order by SourceSystemRecordNumber</code></pre></div>
+                    <div class="row"><p align="left">Запрос выводит только те сделки, которые присутствуют в обоих таблицах. Если поменять таблицы местами, результат не изменится. Заголовок всегда берется из первой таблицы.</p></div>
+                </section>
+                <section>
+                    <div class="row">
+                        <pre><code data-trim data-noescape class="sql">select
+    SourceSystemRecordNumber,
+    CounterpartyName
+from mbk.vMBKDeals
+where BusinessBlockCode = 'CIB'
+
+<mark>except</mark>
+
+select
+    SourceSystemRecordNumber,
+    Name
+from dwh.vDeal
+where BusinessBlockCode = 'CIB‘
+order by SourceSystemRecordNumber</code></pre></div>
+                    <div class="row"><p align="left">Запрос выводит только те сделки, которые есть в первой таблице, но отсутствуют во второй. Если поменять таблицы местами, результат изменится.</p></div>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h1>НЕМНОГО ПРАКТИКИ</h1>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
+                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 1</h4>
+                    <p align="left">Напишите запрос, выбирающий
+                        <ul>
+                            <li>дату валютирования, сумму, валюту и имя контрагента</li>
+                        </ul>
+                    </p>
+                    <p align="left">для сделок, присутствующих в источнике данных CORPORATE_LIABILITIES.CA и в представлении dwh.vDeal на 2018-04-30. Вывести данные требуется без дубликатов.</p>
+                    <p align="left">Обратите внимание:  Валюта «рубли» в источнике обозначается 'RUR', необходимо «перевести» ее в 'RUB'. Воспользуйтесь уже изученной функцией <mark>CASE</mark> или <mark>REPLACE</mark>.</p>
+                </section>
+                <section>
+                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 1 (решение 1)</h4>
+                    <pre><code class="sql">select
+	VALUE_DATE,
+	AMOUNT,
+	replace(CCY, 'RUR', 'RUB') CCY,
+	COUNTERPARTY_NAME
+from CORPORATE_LIABILITIES.C
+
+union
+
+select
+	ValueDate,
+	CurrentNominal,
+	CurrencyCode,
+	Name
+from dwh.vDeal
+where BookValueDate = '2018-04-30'</code></pre>
+                </section>
+                <section>
+                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 1 (решение 2)</h4>
+                    <pre><code class="sql">select
+	VALUE_DATE,
+	AMOUNT,
+	case CCY
+	    when 'RUR'  then 'RUB'
+	    else CCY
+	end CCY,
+	COUNTERPARTY_NAME
+from CORPORATE_LIABILITIES.CA
+
+union
+
+select
+	ValueDate,
+	CurrentNominal,
+	CurrencyCode,
+	Name
+from dwh.vDeal
+where BookValueDate = '2018-04-30'</code></pre>
+                </section>
+                <section>
+                    <h4>UNION/EXCEPT/INTERSECT– ЗАДАЧА 2</h4>
+                    <p align="left">Напишите запрос, выбирающий </p>
+                    <ul>
+                        <li>дату валютирования (вывести как ValueDate)</li>
+                        <li>сумму (вывести как Amount)</li>
+                        <li>валюту  (вывести как CCY)</li>
+                        <li>имя контрагента (вывести как Name)</li>
+                    </ul>
+                    <p align="left">для сделок, присутствующих как в представлении dwh.vDeal, так и в источнике данных CORPORATE_LIABILITIES.CA. Вывести данные требуется без дубликатов.</p>
+                </section>
+                <section>
+                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 2 (решение 1)</h4>
+                    <pre><code class="sql">select
+	VALUE_DATE ValueDate,
+	AMOUNT,
+	replace(CCY, 'RUR', 'RUB') CCY,
+	COUNTERPARTY_NAME Name
+from CORPORATE_LIABILITIES.CA
+
+intersect
+
+select
+	ValueDate,
+	CurrentNominal,
+	CurrencyCode,
+	Name
+from dwh.vDeal</code></pre>
+                </section>
+                <section>
+                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 2 (решение 2)</h4>
+                    <pre><code class="sql">select
+	VALUE_DATE ValueDate,
+	AMOUNT,
+	case CCY
+	    when 'RUR'  then 'RUB'
+	    else CCY
+	end CCY,
+	COUNTERPARTY_NAME Name
+from CORPORATE_LIABILITIES.CA
+
+intersect
+
+select
+	ValueDate,
+	CurrentNominal,
+	CurrencyCode,
+	Name
+from dwh.vDeal</code></pre>
+                </section>
+            </section>
+            <section>
                 <h1>Запросы к нескольким таблицам</h1>
                 <aside class=notes>
                     До сих пор мы работали только с единственной таблицей, но, данные, описывающие какую-то либо сущность, обычно разбиты на
@@ -113,15 +405,15 @@ order by col5_modified desc</code></pre>
                         <tbody>
                             <tr>
                                 <th>FullName</th>
-                                <td>Болгов Александр Викторович</td>
+                                <td>Скопинцев Сергей Юрьевич</td>
                             </tr>
                             <tr>
                                 <th>BirthDate</th>
-                                <td>1988-05-30</td>
+                                <td>1984-09-23</td>
                             </tr>
                             <tr>
                                 <th>HireDate</th>
-                                <td>2014-04-01</td>
+                                <td>2010-04-01</td>
                             </tr>
                             <tr>
                                 <th>HireAge</th>
@@ -172,19 +464,19 @@ order by col5_modified desc</code></pre>
                                 <tr>
                                     <td></td>
                                     <th>FirstName</th>
-                                    <td>Александр</td>
+                                    <td>Сергей</td>
                                     <td>Игорь</td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <th>MiddleName</th>
-                                    <td>Викторович</td>
+                                    <td>Юрьевич</td>
                                     <td>Анатольевич</td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <th>LastName</th>
-                                    <td>Болгов</td>
+                                    <td>Скопинцев</td>
                                     <td>Нейштадт</td>
                                 </tr>
                                 <tr>
@@ -196,7 +488,7 @@ order by col5_modified desc</code></pre>
                                 <tr>
                                     <td></td>
                                     <th>BirthDate</th>
-                                    <td>1988-05-30</td>
+                                    <td>1984-09-23</td>
                                     <td>NULL</td>
                                 </tr>
                                 <tr>
