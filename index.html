@@ -590,8 +590,7 @@ from dwh.vDeal</code></pre>
 from EnglishNumbers as e
 join FrenchNumbers f on 
     e.NumberId = 
-        f.NumberId
-where e.NumberId > 0</code></pre>
+        f.NumberId</code></pre>
                     </div>
                 </div>
             </section>
@@ -701,28 +700,25 @@ join table1 t1_par on t1.parent_id = t1_par.id
                 </section>
                 <section>
                     <h3>Join - Задача 1</h3>
-                    <p>Напишите запрос, выбирающий для каждого продукта\товара (таблица DimProduct), его имя на английском языке
-                        (EnglishProductName) и название под-категории на Английском языке(таблица DimSubCategory, столбец
-                        EnglishProductSubcategoryName). Необходимо выбрать только те продукты, у которых определена под-категория.
+                    <p>Напишите запрос, выбирающий для каждого контрагента (таблица dwh.Counterparty) название его типа (таблица dwh.DimCounterpartyType, столбец
+                        CounterpartyTypeТame).
                     </p>
                     <h4>&darr;</h4>
                 </section>
                 <section>
                     <h3>Join - Задача 2</h3>
-                    <p>Модифицируйте запрос из предыдущей задачи таким образом, чтобы выбирались только продукты\товары красного
-                        цвета.
+                    <p>Модифицируйте запрос из предыдущей задачи таким образом, чтобы выбирались только контрагенты - юр. лица.
                     </p>
                     <h4>&darr;</h4>
                 </section>
                 <section>
                     <h3>Join - Задача 3</h3>
-                    <p>Добавьте к предыдущему запросу еще название Категории продукта на английском языке.</p>
+                    <p>Добавьте к предыдущему запросу еще название страны контрагента (таблица dwh.DimCountry, столбец CountryName).</p>
                     <h4>&darr;</h4>
                 </section>
                 <section>
                     <h3>Join - Задача 4*</h3>
-                    <p>Напишите запрос, выбирающий id сотрудников, у которых первая буква имени совпадает с первой буковй имени
-                        начальника
+                    <p>Из таблицы dwh.Deal выберите сделки за апрель (BookValueDate = '2018-04-30') у которых с марта (BookValueDate = '2018-03-31') уменьшился остаток основного долга (поле CurrentNominal).
                     </p>
                 </section>
             </section>
@@ -946,21 +942,7 @@ left join table1 t1_par on t1.parent_id = t1_par.id
                 </section>
                 <section>
                     <h3>Left JOIN - Задача 1</h3>
-                    <p>Для каждого продукта (DimProduct) вывести его название на английском языке (EnglishProductName) и, если есть, название под-категории на английском языке (EnglishProductSubcategoryName)</p>
-                    <h1>&darr;</h1>
-                </section>
-                <section>
-                    <h3>Left JOIN - Задача 2</h3>
-                    <h1>&darr;</h1>
-                </section>
-                <section>
-                    <h3>Left JOIN - Задача 3</h3>
-                    <p></p>
-                    <h1>&darr;</h1>
-                </section>
-                <section>
-                    <h3>Left JOIN - Задача 4*</h3>
-                    <h1>&darr;</h1>
+                    <p>Из представления dwh.vDeal для контрагента 'Важный Иван Иванович' выведите сделки за 2018-04-30. Добавьте к этим сделкам остатки за предыдущий месяц, если такие существуют.</p>
                 </section>
             </section>
 
