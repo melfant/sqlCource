@@ -180,203 +180,6 @@ from m_tbl</code></pre></div>
                 </section>
             </section>
             <section>
-                <h1>ОПЕРАЦИИ НАД МНОЖЕСТВАМИ</h1>
-            </section>
-            <section>
-                <section>
-                    <h4>ОБЪЕДИНЕНИЕ ТАБЛИЦ</h4>
-                    <p>Для объединения нескольких запросов используется оператор <mark>UNION [ALL]</mark></p>
-                    <h4>&darr;</h4>
-                </section>
-                <section>
-                    <p>Допустим, мы хотим вывести всех клиентов CIB из 2 источников. Сравните результат двух запросов:</p>
-                    <div class="row">
-                        <div class="col-xs-6"><pre><code data-noescape class="sql">select
-    SourceSystemRecordNumber,
-    CounterpartyName
-from mbk.vMBKDeals
-where BusinessBlockCode = 'CIB'
-
-<mark>union all</mark>
-
-select
-    SourceSystemRecordNumber,
-    Name
-from dwh.vDeal
-where BusinessBlockCode = 'CIB'
-order by SourceSystemRecordNumber</code></pre></div>
-                        <div class="col-xs-6"><pre><code data-trim data-noescape class="sql">select
-    SourceSystemRecordNumber,
-    CounterpartyName
-from mbk.vMBKDeals
-where BusinessBlockCode = 'CIB'
-
-<mark>union</mark>
-
-select
-    SourceSystemRecordNumber,
-    Name
-from dwh.vDeal
-where BusinessBlockCode = 'CIB'
-order by SourceSystemRecordNumber</code></pre></div>
-                    </div>
-                </section>
-                <section>
-                    <p>Если требуется вывести в результирующий набор все строки каждого запроса вместе с повторами, необходимо использовать <mark>UNION ALL</mark>.</p>
-                    <p class="fragment">Для вывода только уникальных строк каждого запроса используется <mark>UNION</mark>.</p>
-                </section>
-            </section>
-            <section>
-                <section>
-                    <h4>ПЕРЕСЕЧЕНИЕ И РАЗНОСТЬ</h4>
-                    <p>Для выполнения операции пересечения или разности результатов запросов используется соответственно <mark>INTERSECT [ALL]</mark> и <mark>EXCEPT [ALL]</mark>.</p>
-                    <h4>&darr;</h4>
-                </section>
-                <section>
-                    <div class="row">
-                        <pre><code data-trim data-noescape class="sql">select
-    SourceSystemRecordNumber,
-    CounterpartyName
-from mbk.vMBKDeals
-where BusinessBlockCode = 'CIB'
-
-<mark>intersect</mark>
-
-select
-    SourceSystemRecordNumber,
-    Name
-from dwh.vDeal
-where BusinessBlockCode = 'CIB'
-order by SourceSystemRecordNumber</code></pre></div>
-                    <div class="row"><p align="left">Запрос выводит только те сделки, которые присутствуют в обоих таблицах. Если поменять таблицы местами, результат не изменится. Заголовок всегда берется из первой таблицы.</p></div>
-                </section>
-                <section>
-                    <div class="row">
-                        <pre><code data-trim data-noescape class="sql">select
-    SourceSystemRecordNumber,
-    CounterpartyName
-from mbk.vMBKDeals
-where BusinessBlockCode = 'CIB'
-
-<mark>except</mark>
-
-select
-    SourceSystemRecordNumber,
-    Name
-from dwh.vDeal
-where BusinessBlockCode = 'CIB'
-order by SourceSystemRecordNumber</code></pre></div>
-                    <div class="row"><p align="left">Запрос выводит только те сделки, которые есть в первой таблице, но отсутствуют во второй. Если поменять таблицы местами, результат изменится.</p></div>
-                </section>
-            </section>
-            <section>
-                <section>
-                    <h1>НЕМНОГО ПРАКТИКИ</h1>
-                    <h4>&darr;</h4>
-                </section>
-                <section>
-                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 1</h4>
-                    <p align="left">Напишите запрос, выбирающий
-                        <ul>
-                            <li>дату валютирования, сумму, валюту и имя контрагента</li>
-                        </ul>
-                    </p>
-                    <p align="left">для сделок, присутствующих в источнике данных CORPORATE_LIABILITIES.CA и в представлении dwh.vDeal на 2018-04-30. Вывести данные требуется без дубликатов.</p>
-                    <p align="left">Обратите внимание:  Валюта «рубли» в источнике обозначается 'RUR', необходимо «перевести» ее в 'RUB'. Воспользуйтесь уже изученной функцией <mark>CASE</mark> или <mark>REPLACE</mark>.</p>
-                </section>
-                <section>
-                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 1 (решение 1)</h4>
-                    <pre><code class="sql">select
-	VALUE_DATE,
-	AMOUNT,
-	replace(CCY, 'RUR', 'RUB') CCY,
-	COUNTERPARTY_NAME
-from CORPORATE_LIABILITIES.C
-
-union
-
-select
-	ValueDate,
-	CurrentNominal,
-	CurrencyCode,
-	Name
-from dwh.vDeal
-where BookValueDate = '2018-04-30'</code></pre>
-                </section>
-                <section>
-                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 1 (решение 2)</h4>
-                    <pre><code class="sql">select
-	VALUE_DATE,
-	AMOUNT,
-	case CCY
-	    when 'RUR'  then 'RUB'
-	    else CCY
-	end CCY,
-	COUNTERPARTY_NAME
-from CORPORATE_LIABILITIES.CA
-
-union
-
-select
-	ValueDate,
-	CurrentNominal,
-	CurrencyCode,
-	Name
-from dwh.vDeal
-where BookValueDate = '2018-04-30'</code></pre>
-                </section>
-                <section>
-                    <h4>UNION/EXCEPT/INTERSECT– ЗАДАЧА 2</h4>
-                    <p align="left">Напишите запрос, выбирающий </p>
-                    <ul>
-                        <li>дату валютирования (вывести как ValueDate)</li>
-                        <li>сумму (вывести как Amount)</li>
-                        <li>валюту  (вывести как CCY)</li>
-                        <li>имя контрагента (вывести как Name)</li>
-                    </ul>
-                    <p align="left">для сделок, присутствующих как в представлении dwh.vDeal, так и в источнике данных CORPORATE_LIABILITIES.CA. Вывести данные требуется без дубликатов.</p>
-                </section>
-                <section>
-                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 2 (решение 1)</h4>
-                    <pre><code class="sql">select
-	VALUE_DATE ValueDate,
-	AMOUNT,
-	replace(CCY, 'RUR', 'RUB') CCY,
-	COUNTERPARTY_NAME Name
-from CORPORATE_LIABILITIES.CA
-
-intersect
-
-select
-	ValueDate,
-	CurrentNominal,
-	CurrencyCode,
-	Name
-from dwh.vDeal</code></pre>
-                </section>
-                <section>
-                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 2 (решение 2)</h4>
-                    <pre><code class="sql">select
-	VALUE_DATE ValueDate,
-	AMOUNT,
-	case CCY
-	    when 'RUR'  then 'RUB'
-	    else CCY
-	end CCY,
-	COUNTERPARTY_NAME Name
-from CORPORATE_LIABILITIES.CA
-
-intersect
-
-select
-	ValueDate,
-	CurrentNominal,
-	CurrencyCode,
-	Name
-from dwh.vDeal</code></pre>
-                </section>
-            </section>
-            <section>
                 <h1>Запросы к нескольким таблицам</h1>
                 <aside class=notes>
                     До сих пор мы работали только с единственной таблицей, но, данные, описывающие какую-то либо сущность, обычно разбиты на
@@ -384,7 +187,7 @@ from dwh.vDeal</code></pre>
                 </aside>
             </section>
             <section>
-                <p>Данные, описывающие объект, обычно хранятся в множестве таблиц</p>
+                <p>Данные, описывающие объект, обычно хранятся во множестве таблиц</p>
                 <br>
                 <p>
                     <strong>Нормализация</strong> - это процесс преобразования данных, устраняющий:
@@ -541,11 +344,153 @@ from dwh.vDeal</code></pre>
             </section>
             <section>
                 <section>
+                    <h3>Кстати, представления!</h3>
+                    <p class="fragment" align="left">Кроме таблиц, в базах бывают представления</p>
+                    <div class="fragment">
+                        <p align="left">Представление (VIEW) — объект базы данных, являющийся результатом выполнения запроса к базе данных, определенного с помощью оператора SELECT, в момент обращения к представлению.</p>
+                        <p align="left">Представления иногда называют «виртуальными таблицами».</p>
+                    </div>
+                </section>
+                <section>
+                    <h3>Пример представления</h3>
+                    <pre><code class="sql">CREATE view [dwh].[vCounterparty]
+as
+select
+    cntp.Name,
+    ct.CounterpartyTypeName,
+    cr.CountryName,
+    cntp.FoundationYear
+from dwh.Counterparty cntp
+	 left join dwh.DimCounterpartyType ct
+        on ct.CounterpartyTypeId = cntp.CounterpartyTypeId
+	 left join dwh.DimCountry cr
+        on cr.CountryId = cntp.CountryId</code></pre>
+                </section>
+            </section>
+            <section>
+                <section>
                     <h1>Учебная БД</h1>
                     <h1>&darr;</h1>
                 </section>
                 <section data-background-image="pictures/dw-schema.png" data-background-size="100%"></section>
 
+            </section>
+            <section>
+                <h1>ОПЕРАЦИИ НАД МНОЖЕСТВАМИ</h1>
+            </section>
+            <section>
+                <section>
+                    <h4>ОБЪЕДИНЕНИЕ ТАБЛИЦ</h4>
+                    <p>Для объединения нескольких запросов используется оператор <mark>UNION [ALL]</mark></p>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
+                    <p>Допустим, мы хотим вывести всех клиентов CIB из 2 источников. Сравните результат двух запросов:</p>
+                    <div class="row">
+                        <div class="col-xs-6"><pre><code data-noescape class="sql">select
+    SourceSystemRecordNumber,
+    CounterpartyName
+from mbk.vMBKDeals
+where BusinessBlockCode = 'CIB'
+
+<mark>union all</mark>
+
+select
+    SourceSystemRecordNumber,
+    Name
+from dwh.vDeal
+where BusinessBlockCode = 'CIB'
+order by SourceSystemRecordNumber</code></pre></div>
+                        <div class="col-xs-6"><pre><code data-trim data-noescape class="sql">select
+    SourceSystemRecordNumber,
+    CounterpartyName
+from mbk.vMBKDeals
+where BusinessBlockCode = 'CIB'
+
+<mark>union</mark>
+
+select
+    SourceSystemRecordNumber,
+    Name
+from dwh.vDeal
+where BusinessBlockCode = 'CIB'
+order by SourceSystemRecordNumber</code></pre></div>
+                    </div>
+                </section>
+                <section>
+                    <p>Если требуется вывести в результирующий набор все строки каждого запроса вместе с повторами, необходимо использовать <mark>UNION ALL</mark>.</p>
+                    <p class="fragment">Для вывода только уникальных строк каждого запроса используется <mark>UNION</mark>.</p>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h4>ПЕРЕСЕЧЕНИЕ И РАЗНОСТЬ</h4>
+                    <p>Для выполнения операции пересечения или разности результатов запросов используется соответственно <mark>INTERSECT [ALL]</mark> и <mark>EXCEPT [ALL]</mark>.</p>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
+                    <div class="row">
+                        <pre><code data-trim data-noescape class="sql">select
+    SourceSystemRecordNumber,
+    CounterpartyName
+from mbk.vMBKDeals
+where BusinessBlockCode = 'CIB'
+
+<mark>intersect</mark>
+
+select
+    SourceSystemRecordNumber,
+    Name
+from dwh.vDeal
+where BusinessBlockCode = 'CIB'
+order by SourceSystemRecordNumber</code></pre></div>
+                    <div class="row"><p align="left">Запрос выводит только те сделки, которые присутствуют в обоих таблицах. Если поменять таблицы местами, результат не изменится. Заголовок всегда берется из первой таблицы.</p></div>
+                </section>
+                <section>
+                    <div class="row">
+                        <pre><code data-trim data-noescape class="sql">select
+    SourceSystemRecordNumber,
+    CounterpartyName
+from mbk.vMBKDeals
+where BusinessBlockCode = 'CIB'
+
+<mark>except</mark>
+
+select
+    SourceSystemRecordNumber,
+    Name
+from dwh.vDeal
+where BusinessBlockCode = 'CIB'
+order by SourceSystemRecordNumber</code></pre></div>
+                    <div class="row"><p align="left">Запрос выводит только те сделки, которые есть в первой таблице, но отсутствуют во второй. Если поменять таблицы местами, результат изменится.</p></div>
+                </section>
+            </section>
+            <section>
+                <section>
+                    <h1>НЕМНОГО ПРАКТИКИ</h1>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
+                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 1</h4>
+                    <p align="left">Напишите запрос, выбирающий
+                    <ul>
+                        <li>дату валютирования, сумму, валюту и имя контрагента</li>
+                    </ul>
+                    </p>
+                    <p align="left">для сделок, присутствующих в источнике данных CORPORATE_LIABILITIES.CA и в представлении dwh.vDeal на 2018-04-30. Вывести данные требуется без дубликатов.</p>
+                    <p align="left">Обратите внимание:  Валюта «рубли» в источнике обозначается 'RUR', необходимо «перевести» ее в 'RUB'. Воспользуйтесь уже изученной функцией <mark>CASE</mark> или <mark>REPLACE</mark>.</p>
+                </section>
+                <section>
+                    <h4>UNION/EXCEPT/INTERSECT– ЗАДАЧА 2</h4>
+                    <p align="left">Напишите запрос, выбирающий </p>
+                    <ul>
+                        <li>дату валютирования (вывести как ValueDate)</li>
+                        <li>сумму (вывести как Amount)</li>
+                        <li>валюту  (вывести как CCY)</li>
+                        <li>имя контрагента (вывести как Name)</li>
+                    </ul>
+                    <p align="left">для сделок, присутствующих как в представлении dwh.vDeal, так и в источнике данных CORPORATE_LIABILITIES.CA. Вывести данные требуется без дубликатов.</p>
+                </section>
             </section>
             <section>
                 <h3>Соединение таблиц</h3>
@@ -1178,36 +1123,8 @@ where CountryName in (
                     <p>Написать запрос, выбирающий всех контрагентов (все строки представления dwh.vCounterparty), у которых код страны +7 (таблица DimCountry).</p>
                 </section>
                 <section>
-                    <h4>Задача 1 - решение</h4>
-                    <pre class="fragment"><code class="sql">select *
-from dwh.vCounterparty
-where CountryName in
-(
-select CountryName--CounterpartyId
-from dwh.DimCountry
-where PhoneCode = '+7'
-)</code></pre>
-                </section>
-                <section>
                     <h4>Задача 2 - подзапрос</h4>
                     <p>Написать запрос, выбирающий все бизнес-блоки, у которых родительским является блок CorporateBusiness. Необходимо вывести столбец BusinessBlockName и дополнительный столбец isMMB, который выводит 1, если это микро или малый бизнес, и 0 для всех остальных.</p>
-                </section>
-                <section>
-                    <h4>Задача 2 - решение</h4>
-                    <pre class="fragment"><code class="sql">select
-BusinessBlockName,
-case
-    when BusinessBlockName  in ('Микро бизнес', 'Малый бизнес')
-        then 1
-    else 0
-end isMMB
-from dwh.DimBusinessBlock
-where ParentBusinessBlockId in
-(
-select BusinessBlockId
- from dwh.DimBusinessBlock
- where BusinessBlockCode = 'CorporateBusiness‘
-)</code></pre>
                 </section>
             </section>
 
@@ -1220,7 +1137,7 @@ select BusinessBlockId
             </section>
             <section>
 
-                <p class=fragment>Скалярный коррелированный подзапрос</p>
+                <p>Скалярный коррелированный подзапрос</p>
                 <pre><code data-noescape>select  'BusinessBlock is ' + (
 select bb.BusinessBlockName
 from dwh.DimBusinessBlock bb
@@ -1271,26 +1188,22 @@ and avg.AvgRate > <mark>vd.CurrentNominalInterestRate</mark>
                 </section>
                 <section>
                     <h4>Задача 1 - корелированный подзапрос</h4>
-                    <p>Для каждого реселлера (DimReseller) вывести его ID и город (City), в котором он находится. Задачу решить
+                    <p>Для каждого контрагента (dwh.Counterparty) вывести его имя и тип (CounterpartyTypename из dwh.DimCounterpartyType). Задачу решить
                         с помощью подзапроса.</p>
                 </section>
                 <section>
                     <h4>Задача 2 - корелированный подзапрос</h4>
-                    <p>Написать запрос, выбирающий сотрудников (все столбцы), для которых была установлена квота в 2010 фискальном
-                        году
-                    </p>
+                    <p>Написать запрос, выбирающий контрагентов (все столбцы), у которых есть сделки на 2018-04-30</p>
                 </section>
                 <section>
                     <h4>Задача 3 - корелированный подзапрос</h4>
-                    <p>Вывести все ID интернет-продаж, причиной продажи которых не был Маркетинг</p>
+                    <p>Вывести все сделки за 2018-04-30 (dwh.Deal), контрагенты по которым не являются юр. лицами</p>
                 </section>
                 <section>
                     <h4>Задача 4</h4>
-                    <p>Для каждого сотрудника вывести его ID, а также ID другого сотрудника, который будет праздновать день
-                        рождения не раньше него. Если таких сотрудников несолько, вывести минимальный ID</p>
+                    <p>Для каждого контрагента вывести его ID, а также ID другого контрагента, который основан позже него (поле FoundationYear). Если таких контрагентов несолько, вывести минимальный ID</p>
                 </section>
             </section>
-
             <section>
                 <h3>Табличные выражения</h3>
             </section>
@@ -1301,9 +1214,9 @@ and avg.AvgRate > <mark>vd.CurrentNominalInterestRate</mark>
 from 
 (
     select *
-    from DimProduct p
-    where p.Color = 'Blue'
-) as blueProducts</code></pre>
+    from dwh.Counterparty c
+    where c.CounterpartyTypeId = 1
+) as banks</code></pre>
                 <ul>
                     <li class="fragment">Все столбцы табл. выражения должны иметь уникальные имена</li>
                     <li class="fragment">Табличное выражение не может содержать ORDER BY без TOP</li>
@@ -1312,13 +1225,13 @@ from
             <section>
                 <h4>Обобщенные табличные выражения</h4>
                 <p>Common Table Expressions (CTE)</p>
-                <pre><code>with blueProducts as (
+                <pre><code>with bank as (
     select *
-    from DimProduct p
-    where p.Color = 'Blue'
+    from dwh.Counterparty c
+    where c.CounterpartyTypeId = 1
 )
 select *
-from blueProducts</code></pre>
+from bank</code></pre>
                 <p class="fragment">* К CTE можно обращаться несколько раз в одном запросе</p>
                 <p class="fragment">* Внутри CTE можно обращатся к предыдущему CTE</p>
             </section>
@@ -1343,11 +1256,13 @@ from blueProducts</code></pre>
                     групп
                 </p>
                 <pre class="fragment"><code class="sql">select count(*)
-from FactResellerSales
+from dwh.Deal
+where BookValueDate = '2018-04-30'
 
-select CurrencyKey, count(*)
-from FactResellerSales
-group by CurrencyKey</code></pre>
+select CurrencyCode, count(*)
+from dwh.Deal
+where BookValueDate = '2018-04-30'
+group by CurrencyCode</code></pre>
                 <p class=fragment>Запрос становится группированным, если есть групповая функции или GROUP BY</p>
             </section>
             <section>
@@ -1371,36 +1286,27 @@ group by other_column</code></pre>
                 </section>
                 <section>
                     <h4>Задача 1 - group by</h4>
-                    <p>Написать запрос, возвращающий сколько существует продуктов каждого цвета. Столбец с количеством продуктов
-                        назвать cnt </p>
+                    <p>Написать запрос, возвращающий количество контрагентов каждого типа. Столбец с количеством назвать cnt </p>
                 </section>
                 <section>
                     <h4>Задача 2 - group by</h4>
-                    <p>Написать запрос, возвращающий название категории продуктов на англ. (EnglishProductCategoryName) и количество
-                        продуктов в этой категории, таких, что средняя цена товара в категории (ListPrice) больше 100 долларов.
-                        Рассматривать только продукты черного цвета.
+                    <p>Написать запрос возвращающий всех контрагентов, у которых за любую имеющуюся дату были депозиты, среднемесячный остаток которых был бы более 1 млн. рублей. Учитывайте только рублевые депозиты.
                     </p>
                 </section>
                 <section>
                     <h4>Задача 3 - group by</h4>
-                    <p>Вывести 30% самых дорогих под-категорий продуктов (EnglishProductSubcategoryName) и их среднюю стоимость
-                        (AveragePrice). для сравнения использовать среднюю стандартную стоимость.</p>
-                </section>
-                <section>
-                    <h4>Задача 4 - group by</h4>
-                    <p>Для каждого продукта вывести его ID и сумму всех продаж за все время через интернет (столбец назвать TotalInternetSales)
-                        и сумму всех продаж за все время через реселлера (назвать TotalResellerSales), а также полную сумму
-                        продаж (назвать TotalSales). Если продаж не было, во все объемы показывать 0.</p>
+                    <p>Вывести 30% самых самых крупных договоров (в рублевом эквиваленте) на 2018-04-30 и их средний остаток основного долга (в рублях).</p>
                 </section>
             </section>
 
             <section>
                 <h4>having</h4>
                 <p>используется для фильтрации на групповом уровне</p>
-                <pre class="fragment"><code class="sql">select OrderDateKey, count(*) as cnt
-from FactResellerSales
-group by OrderDateKey
-having count(*) > 3000</code></pre>
+                <pre class="fragment"><code class="sql">select CounterpartyId, count(*) as cnt
+from dwh.Deal
+where BookValueDate = '2018-04-30'
+group by CounterpartyId
+having count(*) > 3</code></pre>
                 <p class="fragment">having применяется к группе, а не к строке</p>
                 <p class="fragment">после having можно использовать только групповые столбцы и функции</p>
             </section>
@@ -1409,13 +1315,13 @@ having count(*) > 3000</code></pre>
                 <h4>Порядок исполнения запроса</h4>
                 <div class="row">
                     <div class="col-xs-6">
-                        <pre><code class="sql">select 
-    OrderDateKey, 
-    count(*) as cnt
-from FactResellerSales
-where UnitPrice > 10
-group by OrderDateKey
-having count(*) > 3000</code></pre>
+                        <pre><code class="sql">select
+CounterpartyId,
+count(*) as cnt
+from dwh.Deal
+where BookValueDate = '2018-04-30'
+group by CounterpartyId
+having count(*) > 3</code></pre>
                     </div>
                     <div class="col-xs-6">
                         <pre class="fragment"><code>1. from ...</code></pre>
