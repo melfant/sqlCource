@@ -264,7 +264,7 @@ select
     SourceSystemRecordNumber,
     Name
 from dwh.vDeal
-where BusinessBlockCode = 'CIB‘
+where BusinessBlockCode = 'CIB'
 order by SourceSystemRecordNumber</code></pre></div>
                     <div class="row"><p align="left">Запрос выводит только те сделки, которые есть в первой таблице, но отсутствуют во второй. Если поменять таблицы местами, результат изменится.</p></div>
                 </section>
@@ -1074,26 +1074,27 @@ cross join table2
                     <h3>Самостоятельные скалярные подзапросы</h3>
                     <p>Запрос, возвращающий одно значение, может быть использован везде, где ожидается скалярное выражение</p>
                     <div class="row">
-                        <div class="col-xs-5 fragment">
-                            <pre><code>select CurrencyAlternateKey
-from DimCurrency
-where CurrencyAlternateKey 
-    = 'USD'
--- 100
+                        <div class="col-xs-6 fragment">
+                            <pre><code>select
+    CounterpartyTypeId
+from dwh.DimCounterpartyType
+where CounterpartyTypename
+    = 'Банки'
+ -- 1
 
 select *
-from FactInternetSales
-where CurrencyKey = 100</code></pre>
+from dwh.Counterparty
+where CounterpartyTypeId = 1</code></pre>
                         </div>
-                        <div class="col-xs-7 fragment">
+                        <div class="col-xs-6 fragment">
                             <pre><code>select *
-from FactInternetSales
-where CurrencyKey =
+from dwh.Counterparty
+where CounterpartyTypeId =
 (
-    select ccy.CurrencyKey
-    from DimCurrency ccy
-    where ccy.CurrencyAlternateKey 
-        = 'USD'
+select CounterpartyTypeId
+from dwh.DimCounterpartyType
+where CounterpartyTypename
+    = 'Банки'
 )</code></pre>
                         </div>
                     </div>
@@ -1101,25 +1102,27 @@ where CurrencyKey =
                 <section>
                     <p>Если запрос вернет больше одного значения - ошибка</p>
                     <pre><code>select *
-from FactInternetSales
-where CurrencyKey = 
+from dwh.Counterparty
+where CounterpartyTypeId =
 (
-    select ccy.CurrencyKey
-    from DimCurrency ccy
-    where ccy.CurrencyAlternateKey > 'A'
-)</code></pre>
-                    <pre class="fragment sql-exception">Msg 512, Level 16, State 1, Line 1
-Subquery returned more than 1 value</pre>
+select CounterpartyTypeId
+from dwh.DimCounterpartyType
+where CounterpartyTypename like '%Банки%'
+)
+</code></pre>
+                    <pre class="fragment sql-exception">Сообщение 512, уровень 16, состояние 1, строка 120
+Subquery returned more than 1 value. This is not permitted when the subquery follows =, !=, <, <= , >, >= or when the subquery is used as an expression.
+</pre>
                 </section>
                 <section>
                     <p>Если запрос вернет пустоту, то в выражение подставится NULL</p>
                     <pre><code>select *
-from FactInternetSales
-where 
+from dwh.Counterparty
+where
 (
-    select ccy.CurrencyKey
-    from DimCurrency ccy
-    where ccy.CurrencyAlternateKey = 'CCY'
+select CounterpartyTypeId
+from dwh.DimCounterpartyType
+where CounterpartyTypename = 'Counterparty Type'
 ) is null</code></pre>
                 </section>
             </section>
@@ -1130,24 +1133,29 @@ where
                     <div class="row">
                         <div class="col-xs-6">
                             <pre><code>select *
-from FactInternetSales
-where CurrencyKey in ( 19, 100 )
-                            </code></pre>
+from dwh.DimCountry
+where CountryName in (
+    'Россия',
+    'США')</code></pre>
                             <pre class=fragment data-fragment-index="1"><code>select *
-from FactInternetSales
-where CurrencyKey not in 
-    ( 19, 100 )</code></pre>
+from dwh.DimCountry
+where CountryName not in (
+    'Россия',
+    'США')
+</code></pre>
                         </div>
                         <div class="col-xs-6 fragment" data-fragment-index="0">
                             <pre><code>select * 
-from FactInternetSales 
-where CurrencyKey in 
-( 
-    select ccy.CurrencyKey 
-    from DimCurrency ccy 
-    where CurrencyAlternateKey 
-        in ('USD', 'CAD') 
-)</code></pre>
+from dwh.Counterparty
+where CountryId in
+(
+select CountryId
+from dwh.DimCountry
+where CountryName in (
+    'Россия',
+    'США')
+)
+</code></pre>
                         </div>
                     </div>
                 </section>
@@ -1167,19 +1175,39 @@ where CurrencyKey in
                 </section>
                 <section>
                     <h4>Задача 1 - подзапрос</h4>
-                    <p>Написать запрос, выбирающий все продажи через реселлера (все строки таблицы FactResellerSales), у которых
-                        дата заказа приходится на второй фискальный семестр 2010 года (DimDate)</p>
+                    <p>Написать запрос, выбирающий всех контрагентов (все строки представления dwh.vCounterparty), у которых код страны +7 (таблица DimCountry).</p>
+                </section>
+                <section>
+                    <h4>Задача 1 - решение</h4>
+                    <pre class="fragment"><code class="sql">select *
+from dwh.vCounterparty
+where CountryName in
+(
+select CountryName--CounterpartyId
+from dwh.DimCountry
+where PhoneCode = '+7'
+)</code></pre>
                 </section>
                 <section>
                     <h4>Задача 2 - подзапрос</h4>
-                    <p>Написать запрос, выбирающий все заказы через реселлера, скидка по которым была свыше 10% (0.1). Необходимо
-                        вывести ID заказа и дополнительный столбец SaleColor, который имеет значение 'R', если товар красного
-                        цвета, или 'O' в противном случае.</p>
+                    <p>Написать запрос, выбирающий все бизнес-блоки, у которых родительским является блок CorporateBusiness. Необходимо вывести столбец BusinessBlockName и дополнительный столбец isMMB, который выводит 1, если это микро или малый бизнес, и 0 для всех остальных.</p>
                 </section>
                 <section>
-                    <h4>Задача 3* - подзапрос</h4>
-                    <p>Написать запрос, возвращающий список ID сотрудников (DimEmployee), находящихся на втором уровне подчинения.
-                        Например, Греф->Морозов->Лякин. Вывести Лякина.</p>
+                    <h4>Задача 2 - решение</h4>
+                    <pre class="fragment"><code class="sql">select
+BusinessBlockName,
+case
+    when BusinessBlockName  in ('Микро бизнес', 'Малый бизнес')
+        then 1
+    else 0
+end isMMB
+from dwh.DimBusinessBlock
+where ParentBusinessBlockId in
+(
+select BusinessBlockId
+ from dwh.DimBusinessBlock
+ where BusinessBlockCode = 'CorporateBusiness‘
+)</code></pre>
                 </section>
             </section>
 
@@ -1193,14 +1221,13 @@ where CurrencyKey in
             <section>
 
                 <p class=fragment>Скалярный коррелированный подзапрос</p>
-                <pre><code data-noescape>select top 10
-    'CurrencyName is ' + (
-        select ccy.CurrencyName
-        from DimCurrency ccy
-        where <mark>sls.CurrencyKey</mark> = ccy.CurrencyKey
-    ) as CurrencyName,
-        *
-from FactInternetSales sls</code></pre>
+                <pre><code data-noescape>select  'BusinessBlock is ' + (
+select bb.BusinessBlockName
+from dwh.DimBusinessBlock bb
+where bb.BusinessBlockId = <mark>m.BusinessBlockId</mark>
+) as BBName,
+*
+from mbk.MBKDeals m</code></pre>
                 <p class="fragment">Возвращает скаляр (одно значение)</p>
                 <p class="fragment">Зависит от внешнего запроса</p>
                 <p class="fragment"><i>Те же правила, что и для скалярного самостоятельного подзапроса</i></p>
@@ -1210,13 +1237,12 @@ from FactInternetSales sls</code></pre>
 
                 <h4>Коррелированный подзапрос, возвращающий столбец</h4>
                 <pre><code data-noescape>select *
-from DimProduct p
-where p.ProductKey in 
-(
-    select sls.ProductKey
-    from FactInternetSales sls
-    where sls.ProductKey = <mark>p.ProductKey</mark> and 
-        sls.UnitPrice > <mark>p.StandardCost</mark>
+from dwh.vDeal vd
+where ValueDate in (
+select r.BookValueDate
+from dwh.FxRate r
+where r.CurrencyCode = <mark>vd.CurrencyCode</mark>
+and r.FxRate > 63
 )</code></pre>
                 <p class="fragment">Все также, как и самостоятельном подзапросе, возвращающем столбец, за исключением зависимости от внешнего
                     запроса
@@ -1228,13 +1254,13 @@ where p.ProductKey in
                 <h4>Оператор exists</h4>
                 <p class=fragment>используется в составе предиката, чтобы проверить, есть ли строки в подзапросе или нет</p>
                 <pre class=fragment><code data-noescape>select *
-from DimProduct p
-where exists
+from dwh.vDeal vd
+where vd.ProductCode like 'A%' and exists
 (
-    select *
-    from FactInternetSales sls
-    where sls.ProductKey = <mark>p.ProductKey</mark> and 
-        sls.UnitPrice > <mark>p.StandardCost</mark>
+select *
+ from dwh.AvgFtpScenario avg
+where avg.CCY = <mark>vd.CurrencyCode</mark>
+and avg.AvgRate > <mark>vd.CurrentNominalInterestRate</mark>
 )</code></pre>
             </section>
 
