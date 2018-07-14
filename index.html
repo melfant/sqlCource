@@ -353,7 +353,7 @@ from m_tbl</code></pre></div>
                 </section>
                 <section>
                     <h3>Пример представления</h3>
-                    <pre><code class="sql">CREATE view [dwh].[vCounterparty]
+                    <pre><code class="sql">create view [dwh].[vCounterparty]
 as
 select
     cntp.Name,
@@ -477,8 +477,8 @@ order by SourceSystemRecordNumber</code></pre></div>
                         <li>дату валютирования, сумму, валюту и имя контрагента</li>
                     </ul>
                     </p>
-                    <p align="left">для сделок, присутствующих в источнике данных CORPORATE_LIABILITIES.CA и в представлении dwh.vDeal на 2018-04-30. Вывести данные требуется без дубликатов.</p>
-                    <p align="left">Обратите внимание:  Валюта «рубли» в источнике обозначается 'RUR', необходимо «перевести» ее в 'RUB'. Воспользуйтесь уже изученной функцией <mark>CASE</mark> или <mark>REPLACE</mark>.</p>
+                    <p align="left">для сделок, присутствующих в CORPORATE_LIABILITIES.CA и в dwh.vDeal на 2018-04-30. Вывести данные требуется без дубликатов.</p>
+                    <p align="left">Обратите внимание на разное обозначение рублей в таблицах. Используйте <mark>CASE</mark> или <mark>REPLACE</mark>.</p>
                 </section>
                 <section>
                     <h4>UNION/EXCEPT/INTERSECT– ЗАДАЧА 2</h4>
@@ -621,7 +621,7 @@ join FrenchNumbers f
 from EnglishNumbers as e
 join FrenchNumbers f 
     on e.NumberId = 
-        f.NumberId and
+        f.NumberId
 where e.NumberId > 3</code></pre>
                     </div>
                 </div>
@@ -646,7 +646,7 @@ join table1 t1_par on t1.parent_id = t1_par.id
                 <section>
                     <h3>Join - Задача 1</h3>
                     <p>Напишите запрос, выбирающий для каждого контрагента (таблица dwh.Counterparty) название его типа (таблица dwh.DimCounterpartyType, столбец
-                        CounterpartyTypeТame).
+                        CounterpartyTypeName).
                     </p>
                     <h4>&darr;</h4>
                 </section>
@@ -1248,11 +1248,11 @@ from bank</code></pre>
             </section-->
 
             <section>
-                <h2>ГРУППИРОВАННЫЕ ЗАПРОСЫ</h2>
+                <h2>ГРУППОВЫЕ ЗАПРОСЫ</h2>
             </section>
             <section>
                 <h4>Кому они нужны?</h4>
-                <p class="fragment">Группированные запросы нужны для подсчета аггрегированных мер (сумм, средних и т.д.) в разрезе некоторых
+                <p class="fragment">Групповые запросы нужны для подсчета аггрегированных мер (сумм, средних и т.д.) в разрезе некоторых
                     групп
                 </p>
                 <pre class="fragment"><code class="sql">select count(*)
@@ -1263,7 +1263,7 @@ select CurrencyCode, count(*)
 from dwh.Deal
 where BookValueDate = '2018-04-30'
 group by CurrencyCode</code></pre>
-                <p class=fragment>Запрос становится группированным, если есть групповая функции или GROUP BY</p>
+                <p class=fragment>Запрос становится групповым, если есть групповая функции или GROUP BY</p>
             </section>
             <section>
                 <h4>Какие есть групповые функции?</h4>
