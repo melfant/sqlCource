@@ -481,6 +481,28 @@ order by SourceSystemRecordNumber</code></pre></div>
                     <p align="left">Обратите внимание на разное обозначение рублей в таблицах. Используйте <mark>CASE</mark> или <mark>REPLACE</mark>.</p>
                 </section>
                 <section>
+                    <h4>UNION/EXCEPT/INTERSECT – ЗАДАЧА 1, решение</h4>
+                    <pre><code class="sql">select
+	VALUE_DATE,
+	Amount,
+	case
+		when CCY = 'RUR' then 'RUB'
+		else CCY
+	end as CCY,
+	COUNTERPARTY_NAME
+from CORPORATE_LIABILITIES.ca
+
+union all
+
+select
+	ValueDate,
+	CurrentNominal,
+	CurrencyCode,
+	Name
+from dwh.vDeal d
+where d.BookValueDate = '2018-04-30'</code></pre>
+                </section>
+                <section>
                     <h4>UNION/EXCEPT/INTERSECT– ЗАДАЧА 2</h4>
                     <p align="left">Напишите запрос, выбирающий </p>
                     <ul>
@@ -491,6 +513,23 @@ order by SourceSystemRecordNumber</code></pre></div>
                     </ul>
                     <p align="left">для сделок, присутствующих как в представлении dwh.vDeal, так и в источнике данных CORPORATE_LIABILITIES.CA. Вывести данные требуется без дубликатов.</p>
                 </section>
+                <section>
+                    <h4>UNION/EXCEPT/INTERSECT– ЗАДАЧА 2, решение</h4>
+                    <pre><code class="sql">select
+	VALUE_DATE as ValueDate,
+	AMOUNT as Amount,
+	CCY,
+	COUNTERPARTY_NAME as Name
+from CORPORATE_LIABILITIES.ca
+
+intersect
+
+select
+	ValueDate,
+	CurrentNominal as Amount,
+	CurrencyCode as CCY,
+	Name
+from dwh.vDeal</code></pre></section>
             </section>
             <section>
                 <h3>Соединение таблиц</h3>
@@ -651,9 +690,30 @@ join table1 t1_par on t1.parent_id = t1_par.id
                     <h4>&darr;</h4>
                 </section>
                 <section>
+                    <h3>Join - Задача 1, решение</h3>
+                    <pre><code class="sql">select
+	c.*,
+	dct.CounterpartyTypename
+from dwh.Counterparty c
+	left join dwh.DimCounterpartyType dct
+		on dct.CounterpartyTypeId = c.CounterpartyTypeId</code></pre>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
                     <h3>Join - Задача 2</h3>
                     <p>Модифицируйте запрос из предыдущей задачи таким образом, чтобы выбирались только контрагенты - юр. лица.
                     </p>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
+                    <h3>Join - Задача 2, решение</h3>
+                    <pre><code class="sql">select
+	c.*,
+	dct.CounterpartyTypename
+from dwh.Counterparty c
+	left join dwh.DimCounterpartyType dct
+		on dct.CounterpartyTypeId = c.CounterpartyTypeId
+where dct.CounterpartyTypename = 'Юридические лица'</code></pre>
                     <h4>&darr;</h4>
                 </section>
                 <section>
@@ -662,9 +722,38 @@ join table1 t1_par on t1.parent_id = t1_par.id
                     <h4>&darr;</h4>
                 </section>
                 <section>
+                    <h3>Join - Задача 3, решение</h3>
+                    <pre><code class="sql">select
+	c.*,
+	dct.CounterpartyTypename,
+	dc.CountryName
+from dwh.Counterparty c
+	left join dwh.DimCounterpartyType dct
+		on dct.CounterpartyTypeId = c.CounterpartyTypeId
+	left join dwh.DimCountry dc
+		on dc.CountryId = c.CountryId
+where dct.CounterpartyTypename = 'Юридические лица'</code></pre>
+                    <h4>&darr;</h4>
+                </section>
+                <section>
                     <h3>Join - Задача 4*</h3>
                     <p>Из таблицы dwh.Deal выберите сделки за апрель (BookValueDate = '2018-04-30') у которых с марта (BookValueDate = '2018-03-31') уменьшился остаток основного долга (поле CurrentNominal).
                     </p>
+                </section>
+                <section>
+                    <h3>Join - Задача 4*, решение</h3>
+                    <pre><code class="sql">
+select
+	d1.*,
+	d2.CurrentNominal as PreviousMonthCurrentNominal
+from dwh.deal d1
+	join dwh.deal d2
+		on d2.SourceSystemId = d1.SourceSystemId
+		and d2.SourceSystemRecordNumber = d1.SourceSystemRecordNumber
+		and d2.BookValueDate = '2018-03-31'
+		and d2.CurrentNominal > d1.CurrentNominal
+where d1.BookValueDate = '2018-04-30'</code></pre>
+                    <h4>&darr;</h4>
                 </section>
             </section>
             <section>
@@ -888,6 +977,19 @@ left join table1 t1_par on t1.parent_id = t1_par.id
                 <section>
                     <h3>Left JOIN - Задача 1</h3>
                     <p>Из представления dwh.vDeal для контрагента 'Важный Иван Иванович' (поле Name в dwh.Counterparty) выведите сделки за 2018-04-30. Добавьте к этим сделкам остатки за предыдущий месяц ('2018-03-31'), если такие существуют.</p>
+                </section>
+                <section>
+                    <h3>Left JOIN - Задача 1, решение</h3>
+                <pre><code>select
+	d1.*,
+	d2.CurrentNominal as PreviousMonthCurrentNominal
+from dwh.vDeal d1
+	left join dwh.vDeal d2
+		on d2.BookValueDate = '2018-03-31'
+		and d2.SourceSystemId = d1.SourceSystemId
+		and d2.SourceSystemRecordNumber = d1.SourceSystemRecordNumber
+where d1.BookValueDate = '2018-04-30'
+	and d1.Name = 'Важный Иван Иванович'</code></pre>
                 </section>
             </section>
 
@@ -1123,8 +1225,32 @@ where CountryName in (
                     <p>Написать запрос, выбирающий всех контрагентов (все строки представления dwh.vCounterparty), у которых код страны +7 (таблица DimCountry).</p>
                 </section>
                 <section>
+                    <h4>Задача 1 - подзапрос, решение</h4>
+                <pre><Code class="sql">select *
+from dwh.vCounterparty
+where CountryName in (
+	select
+		countryName
+	from dwh.DimCountry
+	where PhoneCode = '+7'
+)</Code></pre>
+                </section>
+                <section>
                     <h4>Задача 2 - подзапрос</h4>
                     <p>Написать запрос, выбирающий все бизнес-блоки, у которых родительским является блок CorporateBusiness. Необходимо вывести столбец BusinessBlockName и дополнительный столбец isMMB, который выводит 1, если это микро или малый бизнес, и 0 для всех остальных.</p>
+                </section>
+                <section>
+                    <h4>Задача 2 - подзапрос, решение </h4>
+                    <pre><code>select
+	BusinessBlockName,
+	1 as isMMB
+from dwh.DimBusinessBlock
+where ParentBusinessBlockId in (
+	select
+		BusinessBlockId
+	from dwh.DimBusinessBlock
+	where BusinessBlockCode = 'CorporateBusiness'
+)</code></pre>
                 </section>
             </section>
 
@@ -1192,16 +1318,80 @@ and avg.AvgRate > <mark>vd.CurrentNominalInterestRate</mark>
                         с помощью подзапроса.</p>
                 </section>
                 <section>
+                    <h4>Задача 1 - корелированный подзапрос, решение</h4>
+                    <pre><code class="sql">select
+	c.Name,
+	(	select
+			CounterpartyTypename
+		from dwh.DimCounterpartyType
+		where CounterpartyTypeId = c.CounterpartyTypeId
+	) as CounterpartyType
+from dwh.Counterparty c</code></pre>
+                </section>
+                <section>
                     <h4>Задача 2 - корелированный подзапрос</h4>
                     <p>Написать запрос, выбирающий контрагентов (все столбцы из dwh.Counterparty), у которых есть сделки на 2018-04-30</p>
+                </section>
+                <section>
+                    <h4>Задача 2 - корелированный подзапрос, решение</h4>
+                    <pre><code class="sql">select
+	*
+from dwh.Counterparty
+where CounterpartyId in (
+	select distinct CounterpartyId
+	from dwh.deal
+	where BookValueDate = '2018-04-30'
+)
+
+-------------------------------------
+
+select
+	*
+from dwh.Counterparty c
+where exists (
+	select top 1 *
+	from dwh.deal
+	where BookValueDate = '2018-04-30'
+		and CounterpartyId = c.CounterpartyId
+)</code></pre>
                 </section>
                 <section>
                     <h4>Задача 3 - корелированный подзапрос</h4>
                     <p>Вывести все сделки за 2018-04-30 (dwh.Deal), контрагенты по которым не являются юр. лицами</p>
                 </section>
                 <section>
+                    <h4>Задача 3 - корелированный подзапрос, решение</h4>
+                    <pre><code class="sql">select
+	*
+from dwh.Deal
+where BookValueDate = '2018-04-30'
+	and CounterpartyId not in (
+		select CounterpartyId
+		from dwh.Counterparty
+		where CounterpartyTypeId = (
+			select CounterpartyTypeId
+			from dwh.DimCounterpartyType
+			where CounterpartyTypename = 'Юридические лица'
+		)
+	)</code></pre>
+                </section>
+                <section>
                     <h4>Задача 4</h4>
                     <p>Для каждого контрагента вывести его ID, а также ID другого контрагента, который основан позже него (поле FoundationYear). Если таких контрагентов несолько, вывести минимальный ID</p>
+                </section>
+                <section>
+                    <h4>Задача 4 - корелированный подзапрос, решение</h4>
+                    <pre><code class="sql">select
+	c.CounterpartyId,
+	(	select top 1
+			CounterpartyId
+		from dwh.Counterparty
+		where FoundationYear > c.FoundationYear
+		order by FoundationYear
+	) as OtherCounterpartyID
+
+	, *
+from dwh.Counterparty c</code></pre>
                 </section>
             </section>
             <section>
@@ -1280,13 +1470,79 @@ group by other_column</code></pre>
                     <p>Написать запрос, возвращающий количество контрагентов каждого типа. Столбец с количеством назвать cnt </p>
                 </section>
                 <section>
+                    <h4>Задача 1 - group by, решение</h4>
+                    <pre><code class="sql">select
+	CounterpartyTypeName,
+	count(*) as cnt
+from dwh.vCounterparty
+group by
+	CounterpartyTypeName</code></pre>
+                </section>
+                <section>
                     <h4>Задача 2 - group by</h4>
                     <p>Написать запрос возвращающий всех контрагентов, у которых есть сделки, средний остаток по которым (за всю доступную историю) был бы более 1 млн. рублей. Учитывайте только рублевые депозиты.
                     </p>
                 </section>
                 <section>
+                    <h4>Задача 2 - group by, решение</h4>
+                    <pre><code class="sql">with avg_d as (
+	select
+		SourceSystemRecordNumber,
+
+		avg(CurrentNominal) as AverageCurrentNominal
+	from dwh.vDeal
+	where CurrencyCode = 'RUB'
+	group by
+		SourceSystemRecordNumber
+)
+
+select
+	*
+from dwh.Counterparty c
+where exists (
+	select
+		top 1 d1.*
+	from dwh.Deal d1
+	where d1.CounterpartyId = c.CounterpartyId
+		and d1.SourceSystemRecordNumber in (
+			select SourceSystemRecordNumber
+			from avg_d
+			where avg_d.AverageCurrentNominal > 1e6
+		)
+)</code></pre>
+                </section>
+                <section>
                     <h4>Задача 3 - group by</h4>
                     <p>Вывести 30% самых самых крупных договоров (в рублевом эквиваленте) на 2018-04-30 и их средний остаток основного долга (в рублях).</p>
+                </section>
+                <section>
+                    <h4>Задача 3 - group by, решение</h4>
+                    <pre><code class="sql">with d as (
+	select
+		d.*,
+		d.CurrentNominal * case when d. CurrencyCode = 'RUB' then 1 else fx.FxRate end as CurrentNominalRub
+	from dwh.Deal d
+		left join dwh.FxRate fx
+			on fx.BaseCurrencyCode = 'RUB'
+			and fx.CurrencyCode = d.CurrencyCode
+			and fx.BookValueDate = d.BookValueDate
+),
+avg_d as (
+	select
+		SourceSystemRecordNumber,
+		avg(CurrentNominalRub) as AvgCurrentNominalRub
+	from d
+	group by
+		SourceSystemRecordNumber
+)
+
+select top 30 percent
+	*,
+	ad.AvgCurrentNominalRub
+from d
+	left join avg_d ad
+		on ad.SourceSystemRecordNumber = d.SourceSystemRecordNumber
+where d.BookValueDate = '2018-04-30'</code></pre>
                 </section>
             </section>
 
@@ -1328,6 +1584,51 @@ having count(*) > 3</code></pre>
                 <h4>Задача - having</h4>
                 <p>Написать запрос возвращающий всех контрагентов, у которых средний остаток по сделкам в рублевом эквиваленте за каждую дату (из имеющейся истории) был бы больше 2 млн. рублей.
                 </p>
+            </section>
+            <section>
+                <h4>Задача - having, решение</h4>
+                <pre><code class="sql">with avg_d as (
+	select
+		d.BookValueDate,
+		d.CounterpartyId,
+		avg(d.CurrentNominal
+			* case when d.CurrencyCode = 'RUB' then 1 else fx.FxRate end
+		) as AvgCurrentNominalRub
+	from dwh.Deal d
+		left join dwh.FxRate fx
+			on fx.BookValueDate = d.BookValueDate
+			and fx.CurrencyCode = d.CurrencyCode
+			and fx.BaseCurrencyCode = 'RUB'
+	group by
+		d.BookValueDate,
+		d.CounterpartyId
+),
+--отметим клиентов, у которых средний остаток опускался ниже двух миллионов
+avg_d_2 as (
+	select
+		d1.BookValueDate,
+		d1.CounterpartyId,
+		d2.CounterpartyId as ctp2
+
+	from avg_d d1
+		left join avg_d d2
+			on d2.BookValueDate = d1.BookValueDate
+			and d2.CounterpartyId = d1.CounterpartyId
+			and d2.AvgCurrentNominalRub > 2e6
+)
+
+select
+	*
+from dwh.Counterparty
+where
+	--клиенты, у которых средний остаток хоть раз был больше двух млн.
+	CounterpartyId in (select distinct CounterpartyId from avg_d where AvgCurrentNominalRub > 2e6)
+	--и у которых средний остаток не опускался ниже двух миллионов
+	and CounterpartyId not in	(	select distinct
+										CounterpartyId
+									from avg_d_2
+									where ctp2 is null
+								)</code></pre>
             </section>
             <!--section>
                 <h1>Конец!</h1>
