@@ -1587,7 +1587,8 @@ having count(*) > 3</code></pre>
             </section>
             <section>
                 <h4>Задача - having, решение</h4>
-                <pre><code class="sql">with avg_d as (
+                <pre><code class="sql">
+with avg_d as (
 	select
 		d.BookValueDate,
 		d.CounterpartyId,
@@ -1602,33 +1603,14 @@ having count(*) > 3</code></pre>
 	group by
 		d.BookValueDate,
 		d.CounterpartyId
-),
---отметим клиентов, у которых средний остаток опускался ниже двух миллионов
-avg_d_2 as (
-	select
-		d1.BookValueDate,
-		d1.CounterpartyId,
-		d2.CounterpartyId as ctp2
-
-	from avg_d d1
-		left join avg_d d2
-			on d2.BookValueDate = d1.BookValueDate
-			and d2.CounterpartyId = d1.CounterpartyId
-			and d2.AvgCurrentNominalRub > 2e6
 )
-
 select
 	*
-from dwh.Counterparty
-where
-	--клиенты, у которых средний остаток хоть раз был больше двух млн.
-	CounterpartyId in (select distinct CounterpartyId from avg_d where AvgCurrentNominalRub > 2e6)
-	--и у которых средний остаток не опускался ниже двух миллионов
-	and CounterpartyId not in	(	select distinct
-										CounterpartyId
-									from avg_d_2
-									where ctp2 is null
-								)</code></pre>
+from dwh.Counterparty c
+where not exists (select *
+		from avg_d a
+		where c.CounterpartyId = a.CounterpartyId and AvgCurrentNominalRub < 2e6 )
+	and CounterpartyId in (select CounterpartyId from avg_d)</code></pre>
             </section>
             <!--section>
                 <h1>Конец!</h1>
