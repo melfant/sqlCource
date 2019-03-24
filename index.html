@@ -1501,7 +1501,7 @@ select
 from dwh.Counterparty c
 where exists (
 	select
-		top 1 d1.*
+		d1.*
 	from dwh.Deal d1
 	where d1.CounterpartyId = c.CounterpartyId
 		and d1.SourceSystemRecordNumber in (
