@@ -695,7 +695,7 @@ join table1 t1_par on t1.parent_id = t1_par.id
 	c.*,
 	dct.CounterpartyTypename
 from dwh.Counterparty c
-	left join dwh.DimCounterpartyType dct
+	join dwh.DimCounterpartyType dct
 		on dct.CounterpartyTypeId = c.CounterpartyTypeId</code></pre>
                     <h4>&darr;</h4>
                 </section>
@@ -711,7 +711,7 @@ from dwh.Counterparty c
 	c.*,
 	dct.CounterpartyTypename
 from dwh.Counterparty c
-	left join dwh.DimCounterpartyType dct
+	join dwh.DimCounterpartyType dct
 		on dct.CounterpartyTypeId = c.CounterpartyTypeId
 where dct.CounterpartyTypename = 'Юридические лица'</code></pre>
                     <h4>&darr;</h4>
@@ -728,9 +728,9 @@ where dct.CounterpartyTypename = 'Юридические лица'</code></pre>
 	dct.CounterpartyTypename,
 	dc.CountryName
 from dwh.Counterparty c
-	left join dwh.DimCounterpartyType dct
+	join dwh.DimCounterpartyType dct
 		on dct.CounterpartyTypeId = c.CounterpartyTypeId
-	left join dwh.DimCountry dc
+	join dwh.DimCountry dc
 		on dc.CountryId = c.CountryId
 where dct.CounterpartyTypename = 'Юридические лица'</code></pre>
                     <h4>&darr;</h4>
